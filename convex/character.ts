@@ -169,7 +169,7 @@ export const initCharacter = mutation({
     const today = todayISO();
 
     await ctx.db.insert("character", {
-      name: "Joseph Zhang",
+      name: "Player",
       class: "Founder",
       overall_level: 1,
       last_updated: now,
