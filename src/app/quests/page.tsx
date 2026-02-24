@@ -64,6 +64,20 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
           {quest.deadline && ` · 截止 ${quest.deadline.slice(0, 10)}`}
         </div>
 
+        {quest.description && (
+          <>
+            <div className="wow-divider" />
+            <div className="mt-4 mb-1">
+              <div className="text-[10px] tracking-[3px] mb-2 uppercase"
+                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>任务描述</div>
+              <p className="text-sm leading-relaxed"
+                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a060', lineHeight: '1.8' }}>
+                {quest.description}
+              </p>
+            </div>
+          </>
+        )}
+
         <div className="wow-divider" />
 
         {/* Rewards */}

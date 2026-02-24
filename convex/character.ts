@@ -299,13 +299,23 @@ export const addAchievement = mutation({
 
 // Default quest templates — regenerated each day
 const DAILY_QUEST_TEMPLATES = [
-  { name: "Plan your top 3 priorities", stat: "DISC", xp_reward: 20 },
-  { name: "60 minutes deep work sprint", stat: "INT", xp_reward: 35 },
-  { name: "Workout / movement session", stat: "STR", xp_reward: 30 },
-  { name: "Meaningful outreach or connection", stat: "SOC", xp_reward: 25 },
-  { name: "Create something publishable", stat: "CRE", xp_reward: 40 },
-  { name: "Push a commit", stat: "CRE", xp_reward: 30 },
+  { name: "Plan your top 3 priorities", stat: "DISC", xp_reward: 20, description: "写下今天最重要的三件事，专注执行。清单越短，执行力越强。" },
+  { name: "60 minutes deep work sprint", stat: "INT", xp_reward: 35, description: "不间断专注工作 60 分钟。关闭通知，进入心流状态。" },
+  { name: "Workout / movement session", stat: "STR", xp_reward: 30, description: "任何形式的体能训练：健身房、跑步、游泳均可。动起来。" },
+  { name: "Meaningful outreach or connection", stat: "SOC", xp_reward: 25, description: "主动联系一个有价值的人：合作、请教或分享。" },
+  { name: "Create something publishable", stat: "CRE", xp_reward: 40, description: "创造一件可以对外发布的作品：代码、功能、内容等。" },
+  { name: "Push a commit", stat: "CRE", xp_reward: 30, description: "向代码仓库提交至少一个 commit。代码即进度。" },
 ];
+
+export const updateQuestDescription = mutation({
+  args: { questId: v.string(), description: v.string() },
+  handler: async (ctx, args) => {
+    const quest = await ctx.db.get(args.questId as any);
+    if (!quest) throw new Error("Quest not found");
+    await ctx.db.patch(quest._id, { description: args.description });
+    return { ok: true };
+  },
+});
 
 export const markQuestCompleted = mutation({
   args: { questId: v.string() },
@@ -331,6 +341,7 @@ export const addQuestToday = mutation({
     name: v.string(),
     stat: v.string(),
     xp_reward: v.number(),
+    description: v.optional(v.string()),
     is_penalty: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
@@ -343,6 +354,7 @@ export const addQuestToday = mutation({
       name: args.name,
       stat: args.stat,
       xp_reward: args.xp_reward,
+      description: args.description,
       completed: false,
       date: today,
       is_boss: false,
@@ -376,6 +388,7 @@ export const generateDailyQuests = mutation({
         name: template.name,
         stat: template.stat,
         xp_reward: template.xp_reward,
+        description: template.description,
         completed: false,
         date: today,
         is_boss: false,

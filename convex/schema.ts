@@ -27,6 +27,7 @@ export default defineSchema({
     xp_reward: v.number(),
     completed: v.boolean(),
     date: v.string(),
+    description: v.optional(v.string()),
     is_boss: v.optional(v.boolean()),
     is_penalty: v.optional(v.boolean()),
     deadline: v.optional(v.string()),
