@@ -78,23 +78,29 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
         <div className="wow-divider" />
 
         {/* ── Description / Lore (WoW's "Description" section) ── */}
-        {(quest.lore || quest.note) && (
+        {quest.lore && (
           <>
             <div className="mt-4 mb-4">
               <div className="text-[11px] tracking-[3px] mb-3 font-bold uppercase"
                 style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>描述</div>
-              {quest.lore && (
-                <p className="text-sm leading-relaxed"
-                  style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
-                  {quest.lore}
-                </p>
-              )}
-              {quest.note && (
-                <p className={`text-sm leading-relaxed ${quest.lore ? 'mt-3' : ''}`}
-                  style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
-                  {quest.note}
-                </p>
-              )}
+              <p className="text-sm leading-relaxed"
+                style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
+                {quest.lore}
+              </p>
+            </div>
+            <div className="wow-divider" />
+          </>
+        )}
+
+        {quest.note && (
+          <>
+            <div className="mt-4 mb-4">
+              <div className="text-[11px] tracking-[3px] mb-3 font-bold uppercase"
+                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>完成记录</div>
+              <p className="text-sm leading-relaxed"
+                style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
+                {quest.note}
+              </p>
             </div>
             <div className="wow-divider" />
           </>
