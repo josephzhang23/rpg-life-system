@@ -28,6 +28,7 @@ export default defineSchema({
     completed: v.boolean(),
     date: v.string(),
     is_boss: v.optional(v.boolean()),
+    is_penalty: v.optional(v.boolean()),
     deadline: v.optional(v.string()),
   }),
   achievements: defineTable({

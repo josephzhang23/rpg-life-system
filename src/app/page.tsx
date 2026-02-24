@@ -66,36 +66,45 @@ function XpBar({ stat, xp, level }: { stat: string; xp: number; level: number })
 /* ── Quest row ── */
 function QuestRow({ quest, onComplete }: { quest: any; onComplete: (id: string) => void }) {
   const meta = STAT_META[quest.stat] ?? STAT_META["INT"];
+  const isPenalty = quest.is_penalty;
   return (
     <div
       className="flex items-center gap-3 py-[10px] border-b last:border-0"
-      style={{ borderColor: 'rgba(200,160,50,0.08)' }}
+      style={{ borderColor: isPenalty ? 'rgba(255,60,60,0.08)' : 'rgba(200,160,50,0.08)' }}
     >
       <button
         onClick={() => !quest.completed && onComplete(quest._id)}
         className={`w-[18px] h-[18px] rounded-sm flex-shrink-0 border flex items-center justify-center text-[10px] transition-all
           ${quest.completed
-            ? "bg-green-900/30 border-green-600/50 text-green-400"
-            : "border-yellow-800/50 hover:border-yellow-500/70 cursor-pointer hover:bg-yellow-900/10"
+            ? isPenalty ? "bg-red-900/30 border-red-600/50 text-red-400" : "bg-green-900/30 border-green-600/50 text-green-400"
+            : isPenalty ? "border-red-800/50 hover:border-red-500/70 cursor-pointer hover:bg-red-900/10" : "border-yellow-800/50 hover:border-yellow-500/70 cursor-pointer hover:bg-yellow-900/10"
           }`}
       >
-        {quest.completed && "✓"}
+        {quest.completed && (isPenalty ? "✗" : "✓")}
       </button>
+
+      <span className="flex-shrink-0 text-xs">{isPenalty ? "💀" : ""}</span>
 
       <span
         className="flex-1 text-sm"
         style={{
           fontFamily: "'Noto Serif SC', serif",
-          color: quest.completed ? 'rgba(232,213,163,0.3)' : 'rgba(232,213,163,0.85)',
+          color: quest.completed ? 'rgba(232,213,163,0.3)' : isPenalty ? 'rgba(255,120,100,0.9)' : 'rgba(232,213,163,0.85)',
           textDecoration: quest.completed ? 'line-through' : 'none'
         }}
       >
         {quest.name}
       </span>
 
-      <span className={`text-[11px] font-bold px-2 py-[2px] rounded-sm flex-shrink-0 ${meta.bg}`}
-        style={{ fontFamily: "'Cinzel', serif" }}>
-        +{quest.xp_reward} {meta.zh}
+      <span
+        className="text-[11px] font-bold px-2 py-[2px] rounded-sm flex-shrink-0"
+        style={{
+          fontFamily: "'Cinzel', serif",
+          background: isPenalty ? 'rgba(255,60,60,0.15)' : meta.bg,
+          color: isPenalty ? '#ff6060' : meta.color,
+        }}
+      >
+        {isPenalty ? `-${quest.xp_reward}` : `+${quest.xp_reward}`} {meta.zh}
       </span>
     </div>
   );

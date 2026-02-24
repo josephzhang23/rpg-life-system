@@ -78,8 +78,8 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
             </div>
             <div>
               <div className="text-[11px]" style={{ color: 'rgba(200,160,50,0.5)', fontFamily: "'Noto Serif SC', serif" }}>经验值</div>
-              <div className="text-lg font-bold" style={{ color: meta.color, fontFamily: "'Cinzel', serif" }}>
-                +{quest.xp_reward} {meta.zh}
+              <div className="text-lg font-bold" style={{ color: quest.is_penalty ? '#ff6060' : meta.color, fontFamily: "'Cinzel', serif" }}>
+                {quest.is_penalty ? `-${quest.xp_reward}` : `+${quest.xp_reward}`} {meta.zh}
               </div>
             </div>
           </div>
@@ -191,12 +191,12 @@ export default function QuestLog() {
                     <span className="flex-1 text-[14px] leading-snug"
                       style={{
                         fontFamily: "'Noto Serif SC', serif",
-                        color: q.completed ? 'rgba(200,170,100,0.35)' : '#d4b87a',
+                        color: q.completed ? 'rgba(200,170,100,0.35)' : q.is_penalty ? 'rgba(255,120,100,0.9)' : '#d4b87a',
                         textDecoration: q.completed ? 'line-through' : 'none',
                       }}>
-                      {q.name}
+                      {q.is_penalty ? '💀 ' : ''}{q.name}
                     </span>
-                    {q.completed && <span style={{ color: '#40c060', fontSize: '13px' }}>✓</span>}
+                    {q.completed && <span style={{ color: q.is_penalty ? '#ff6060' : '#40c060', fontSize: '13px' }}>{q.is_penalty ? '✗' : '✓'}</span>}
                     {/* Arrow hint on mobile */}
                     {!q.completed && <span className="md:hidden" style={{ color: 'rgba(200,160,50,0.3)', fontSize: '12px' }}>›</span>}
                   </div>

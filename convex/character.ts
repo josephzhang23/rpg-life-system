@@ -37,41 +37,34 @@ async function recalcCharacterLevel(ctx: any) {
 }
 
 async function applyXpToStat(ctx: any, statId: string, amount: number) {
-  if (amount <= 0) {
-    throw new Error("XP amount must be positive");
-  }
-
   const stat = (await ctx.db.query("stats").collect()).find((s: any) => s.stat_id === statId);
-  if (!stat) {
-    throw new Error(`Stat ${statId} not found`);
-  }
+  if (!stat) throw new Error(`Stat ${statId} not found`);
 
   let level = stat.level;
   let xp = stat.xp + amount;
-  const total_xp = stat.total_xp + amount;
+  const total_xp = stat.total_xp + Math.max(amount, 0); // only count positive toward total
 
+  // Handle XP deduction — don't go below 0 xp at level 1
+  if (xp < 0) {
+    if (level > 1) {
+      level = Math.max(1, level - 1);
+      xp = Math.max(0, (level * 100) + xp);
+    } else {
+      xp = 0;
+    }
+  }
+
+  // Handle level up
   while (xp >= level * 100) {
     xp -= level * 100;
     level += 1;
   }
 
-  await ctx.db.patch(stat._id, {
-    level,
-    xp,
-    total_xp,
-  });
+  await ctx.db.patch(stat._id, { level, xp, total_xp });
 
   const overall_level = await recalcCharacterLevel(ctx);
 
-  return {
-    statId,
-    amount,
-    level,
-    xp,
-    total_xp,
-    nextLevelXp: level * 100,
-    overall_level,
-  };
+  return { statId, amount, level, xp, total_xp, nextLevelXp: level * 100, overall_level };
 }
 
 export const awardXP = mutation({
@@ -101,7 +94,8 @@ export const completeQuest = mutation({
       completed: true,
     });
 
-    const xpResult = await applyXpToStat(ctx, quest.stat, quest.xp_reward);
+    const xpAmount = quest.is_penalty ? -Math.abs(quest.xp_reward) : quest.xp_reward;
+    const xpResult = await applyXpToStat(ctx, quest.stat, xpAmount);
 
     const streaks = await ctx.db.query("streaks").collect();
     const daily = streaks.find((s: any) => s.type === "daily");
@@ -337,6 +331,7 @@ export const addQuestToday = mutation({
     name: v.string(),
     stat: v.string(),
     xp_reward: v.number(),
+    is_penalty: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const today = todayISO();
@@ -351,6 +346,7 @@ export const addQuestToday = mutation({
       completed: false,
       date: today,
       is_boss: false,
+      is_penalty: args.is_penalty ?? false,
     } as any);
     return { ok: true, created: true };
   },
