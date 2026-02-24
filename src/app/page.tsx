@@ -108,36 +108,37 @@ function AchievementRow({ achievement }: { achievement: any }) {
       className="flex items-center gap-3 px-3 py-3"
       style={{
         background: locked
-          ? 'linear-gradient(90deg, rgba(30,22,10,0.9), rgba(25,18,8,0.9))'
-          : 'linear-gradient(90deg, rgba(50,35,8,0.95), rgba(40,28,6,0.95))',
-        borderTop: '1px solid rgba(200,160,50,0.12)',
-        borderBottom: '1px solid rgba(0,0,0,0.4)',
+          ? 'linear-gradient(90deg, #221908, #1e1606)'   /* WoW: warm dark brown for locked */
+          : 'linear-gradient(90deg, #3a2a06, #2e2004)',  /* slightly brighter for unlocked */
+        borderTop: '1px solid rgba(0,0,0,0.35)',
+        borderBottom: '1px solid rgba(255,200,80,0.06)',
       }}
     >
       {/* Icon — WoW square frame */}
       <div
         className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-2xl rounded-sm"
         style={{
-          background: 'linear-gradient(135deg, #1a1208, #0e0c06)',
+          background: 'linear-gradient(135deg, #1c1408, #100e05)',
           border: '2px solid',
-          borderColor: locked ? 'rgba(80,60,20,0.5)' : 'rgba(160,120,30,0.8)',
+          borderColor: locked ? '#4a3810' : '#8a6a18',
           boxShadow: locked
-            ? 'inset 0 0 8px rgba(0,0,0,0.6)'
-            : 'inset 0 0 8px rgba(180,120,0,0.2), 0 0 4px rgba(160,120,30,0.3)',
-          filter: locked ? 'grayscale(0.8) brightness(0.5)' : 'none',
+            ? 'inset 0 0 6px rgba(0,0,0,0.7)'
+            : 'inset 0 0 8px rgba(180,120,0,0.25), 0 0 5px rgba(160,120,30,0.3)',
+          filter: locked ? 'brightness(0.7) saturate(0.5)' : 'none',
         }}
       >
         {achievement.icon}
       </div>
 
-      {/* Name + description — centered block */}
+      {/* Name + description — centered */}
       <div className="flex-1 min-w-0 text-center px-2">
         <div
           className="text-[15px] font-semibold leading-snug"
           style={{
             fontFamily: "'Noto Serif SC', serif",
-            color: locked ? 'rgba(200,170,100,0.35)' : '#f0e0b0',
-            textShadow: locked ? 'none' : '0 1px 3px rgba(0,0,0,0.8)',
+            /* locked: warm readable tan (exactly WoW's unearned text) */
+            color: locked ? '#b8924a' : '#f0e0b0',
+            textShadow: '0 1px 3px rgba(0,0,0,0.9)',
           }}
         >
           {achievement.name}
@@ -146,7 +147,8 @@ function AchievementRow({ achievement }: { achievement: any }) {
           className="text-[11px] mt-[3px] leading-snug"
           style={{
             fontFamily: "'Noto Serif SC', serif",
-            color: locked ? 'rgba(180,150,80,0.25)' : 'rgba(210,185,130,0.6)',
+            /* locked: dimmer tan, still readable */
+            color: locked ? '#7a5e28' : 'rgba(210,185,130,0.65)',
           }}
         >
           {achievement.unlocked
@@ -157,24 +159,24 @@ function AchievementRow({ achievement }: { achievement: any }) {
         </div>
       </div>
 
-      {/* Circular badge — WoW coin style */}
+      {/* Circular badge — silver when locked, gold when unlocked */}
       <div
-        className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold"
+        className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center font-bold"
         style={{
           background: locked
-            ? 'radial-gradient(circle, #2a2010 0%, #1a1408 100%)'
-            : 'radial-gradient(circle, #6a4a00 0%, #3a2800 100%)',
+            ? 'radial-gradient(circle at 35% 35%, #4a3e2a, #1e1a10)'
+            : 'radial-gradient(circle at 35% 35%, #6a4800, #3a2600)',
           border: '2px solid',
-          borderColor: locked ? 'rgba(80,65,25,0.5)' : 'rgba(200,160,50,0.8)',
+          borderColor: locked ? '#5a4a20' : '#c89030',
           boxShadow: locked
-            ? 'inset 0 1px 3px rgba(0,0,0,0.6)'
-            : 'inset 0 1px 3px rgba(255,200,50,0.15), 0 0 6px rgba(180,130,0,0.3)',
-          color: locked ? 'rgba(140,110,40,0.4)' : '#f0c060',
+            ? 'inset 0 1px 4px rgba(0,0,0,0.7), inset 0 -1px 2px rgba(255,220,100,0.05)'
+            : 'inset 0 1px 4px rgba(255,200,50,0.15), 0 0 8px rgba(180,130,0,0.35)',
+          color: locked ? '#7a6830' : '#f5d060',
           fontFamily: "'Cinzel', serif",
-          fontSize: locked ? '14px' : '13px',
+          fontSize: '13px',
         }}
       >
-        {locked ? '—' : '✦'}
+        {locked ? '?' : '✦'}
       </div>
     </div>
   );
