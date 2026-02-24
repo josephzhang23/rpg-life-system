@@ -310,7 +310,32 @@ const DAILY_QUEST_TEMPLATES = [
   { name: "Workout / movement session", stat: "STR", xp_reward: 30 },
   { name: "Meaningful outreach or connection", stat: "SOC", xp_reward: 25 },
   { name: "Create something publishable", stat: "CRE", xp_reward: 40 },
+  { name: "Push a commit", stat: "CRE", xp_reward: 30 },
 ];
+
+export const addQuestToday = mutation({
+  args: {
+    name: v.string(),
+    stat: v.string(),
+    xp_reward: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const today = todayISO();
+    const existing = (await ctx.db.query("quests").collect()).find(
+      (q: any) => q.date === today && q.name === args.name
+    );
+    if (existing) return { ok: true, reason: "already_exists" };
+    await ctx.db.insert("quests", {
+      name: args.name,
+      stat: args.stat,
+      xp_reward: args.xp_reward,
+      completed: false,
+      date: today,
+      is_boss: false,
+    } as any);
+    return { ok: true, created: true };
+  },
+});
 
 export const generateDailyQuests = mutation({
   args: {},
