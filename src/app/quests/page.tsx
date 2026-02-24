@@ -66,20 +66,6 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
 
         <div className="wow-divider" />
 
-        {/* Description */}
-        <div className="mt-4 mb-5">
-          <div className="text-[10px] tracking-[3px] mb-2 uppercase"
-            style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>任务描述</div>
-          <p className="text-sm leading-relaxed"
-            style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a060', lineHeight: '1.8' }}>
-            {quest.is_boss
-              ? '这是一场首领战。在截止日期前完成以获得奖励。'
-              : '完成此任务以获得经验值奖励。'}
-          </p>
-        </div>
-
-        <div className="wow-divider" />
-
         {/* Rewards */}
         <div className="mt-4">
           <div className="text-[10px] tracking-[3px] mb-3 uppercase"
