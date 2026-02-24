@@ -226,7 +226,7 @@ export const initCharacter = mutation({
       ["int_5", "Mind Palace", "🧠"],
       ["boss_clear", "Boss Slayer", "👑"],
       ["week_streak", "Seven-Day Chain", "🔥"],
-      ["unicornslayer", "Unicornslayer", "🦄"],
+      ["unicornslayer", "Unicorn", "🦄"],
     ] as const;
 
     for (const [key, name, icon] of achievementSeeds) {
@@ -257,6 +257,25 @@ export const setStatXP = mutation({
     await ctx.db.patch(stat._id, { xp: args.xp, total_xp: args.total_xp, level: args.level });
     await recalcCharacterLevel(ctx);
     return { ok: true, stat: args.stat, xp: args.xp, level: args.level };
+  },
+});
+
+export const updateAchievement = mutation({
+  args: {
+    key: v.string(),
+    name: v.optional(v.string()),
+    icon: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const achievement = (await ctx.db.query("achievements").collect()).find(
+      (a: any) => a.key === args.key
+    );
+    if (!achievement) throw new Error(`Achievement ${args.key} not found`);
+    const patch: any = {};
+    if (args.name !== undefined) patch.name = args.name;
+    if (args.icon !== undefined) patch.icon = args.icon;
+    await ctx.db.patch(achievement._id, patch);
+    return { ok: true };
   },
 });
 
