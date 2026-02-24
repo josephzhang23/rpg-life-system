@@ -518,18 +518,18 @@ export default function Dashboard() {
 
       {/* Footer */}
       <div className="mt-8 flex flex-col items-center gap-4">
-        <Link
-          href="/quests"
-          className="flex items-center gap-2 px-5 py-2 rounded-sm text-sm transition-all hover:opacity-80"
-          style={{
-            fontFamily: "'Noto Serif SC', serif",
-            color: '#c8a040',
-            background: 'rgba(200,160,50,0.08)',
-            border: '1px solid rgba(200,160,50,0.3)',
-          }}
-        >
-          📖 任务日志
-        </Link>
+        <div className="flex gap-3">
+          <Link href="/quests"
+            className="flex items-center gap-2 px-5 py-2 rounded-sm text-sm transition-all hover:opacity-80"
+            style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040', background: 'rgba(200,160,50,0.08)', border: '1px solid rgba(200,160,50,0.3)' }}>
+            📖 任务日志
+          </Link>
+          <Link href="/catalog"
+            className="flex items-center gap-2 px-5 py-2 rounded-sm text-sm transition-all hover:opacity-80"
+            style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040', background: 'rgba(200,160,50,0.08)', border: '1px solid rgba(200,160,50,0.3)' }}>
+            📚 任务目录
+          </Link>
+        </div>
         <div
           className="text-xs tracking-[3px]"
           style={{ color: 'rgba(200,160,50,0.2)', fontFamily: "'Noto Serif SC', serif" }}

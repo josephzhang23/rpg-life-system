@@ -319,6 +319,53 @@ const DAILY_QUEST_TEMPLATES = [
     lore: "代码库里的每一个 commit 都是你存在的证明。不提交，就等于不战斗。" },
 ];
 
+// ── Quest Catalog ──────────────────────────────────────────
+
+export const getCatalog = query({
+  args: {},
+  handler: async (ctx) => {
+    const items = await ctx.db.query("quest_catalog").collect();
+    return items.sort((a: any, b: any) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
+  },
+});
+
+export const upsertCatalogEntry = mutation({
+  args: {
+    name: v.string(),
+    stat: v.string(),
+    xp: v.number(),
+    is_penalty: v.boolean(),
+    category: v.string(),
+    description: v.optional(v.string()),
+    lore: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const existing = (await ctx.db.query("quest_catalog").collect()).find(
+      (e: any) => e.name === args.name
+    );
+    if (existing) {
+      await ctx.db.patch(existing._id, args);
+      return { ok: true, action: "updated" };
+    }
+    await ctx.db.insert("quest_catalog", args);
+    return { ok: true, action: "created" };
+  },
+});
+
+export const deleteCatalogEntry = mutation({
+  args: { name: v.string() },
+  handler: async (ctx, args) => {
+    const entry = (await ctx.db.query("quest_catalog").collect()).find(
+      (e: any) => e.name === args.name
+    );
+    if (!entry) throw new Error("Entry not found");
+    await ctx.db.delete(entry._id);
+    return { ok: true };
+  },
+});
+
+// ── Quest Description / Lore ───────────────────────────────
+
 export const updateQuestDescription = mutation({
   args: { questId: v.string(), description: v.optional(v.string()), lore: v.optional(v.string()) },
   handler: async (ctx, args) => {

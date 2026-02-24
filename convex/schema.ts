@@ -33,6 +33,16 @@ export default defineSchema({
     is_penalty: v.optional(v.boolean()),
     deadline: v.optional(v.string()),
   }),
+  quest_catalog: defineTable({
+    name: v.string(),
+    stat: v.string(),
+    xp: v.number(),              // positive = reward, negative = penalty
+    is_penalty: v.boolean(),
+    category: v.string(),        // e.g. "health", "fitness", "coding", "social"
+    description: v.optional(v.string()),
+    lore: v.optional(v.string()),
+  }),
+
   achievements: defineTable({
     key: v.string(),
     name: v.string(),
