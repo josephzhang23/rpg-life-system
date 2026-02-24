@@ -54,55 +54,77 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-5" style={{ background: 'linear-gradient(135deg, #1a1206, #140f04)' }}>
-        {/* Title */}
-        <h2 className="text-xl font-bold mb-1 leading-snug"
+
+        {/* ── Title ── */}
+        <h2 className="text-xl font-bold leading-snug mb-2"
           style={{ fontFamily: "'Noto Serif SC', serif", color: '#f0e0b0', textShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
           {quest.name}
         </h2>
-        <div className="text-[11px] mb-4" style={{ color: 'rgba(200,160,50,0.45)', fontFamily: "'Noto Serif SC', serif" }}>
-          {quest.is_boss ? '首领战' : quest.date}
+
+        {/* ── Objective — paragraph right under title (WoW style) ── */}
+        {quest.description && (
+          <p className="text-sm mb-3 leading-relaxed"
+            style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8b87a', lineHeight: '1.75' }}>
+            {quest.description}
+          </p>
+        )}
+
+        {/* Date / type */}
+        <div className="text-[11px] mb-4" style={{ color: 'rgba(200,160,50,0.4)', fontFamily: "'Noto Serif SC', serif" }}>
+          {quest.is_boss ? '⚠️ 首领战' : quest.is_penalty ? '💀 惩罚任务' : `📅 ${quest.date}`}
           {quest.deadline && ` · 截止 ${quest.deadline.slice(0, 10)}`}
         </div>
 
-        {quest.description && (
+        <div className="wow-divider" />
+
+        {/* ── Description / Lore (WoW's "Description" section) ── */}
+        {quest.lore && (
           <>
-            <div className="wow-divider" />
-            <div className="mt-4 mb-1">
-              <div className="text-[10px] tracking-[3px] mb-2 uppercase"
-                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>任务描述</div>
+            <div className="mt-4 mb-4">
+              <div className="text-[11px] tracking-[3px] mb-3 font-bold uppercase"
+                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>描述</div>
               <p className="text-sm leading-relaxed"
-                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a060', lineHeight: '1.8' }}>
-                {quest.description}
+                style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
+                {quest.lore}
               </p>
             </div>
+            <div className="wow-divider" />
           </>
         )}
 
-        <div className="wow-divider" />
-
-        {/* Rewards */}
+        {/* ── Rewards ── */}
         <div className="mt-4">
           <div className="text-[10px] tracking-[3px] mb-3 uppercase"
             style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>奖励</div>
-          <div className="flex items-center gap-3 px-4 py-3 rounded-sm inline-flex"
-            style={{ background: 'rgba(200,160,50,0.08)', border: '1px solid rgba(200,160,50,0.25)' }}>
+          <div className="flex items-center gap-3 px-4 py-3 rounded-sm"
+            style={{
+              display: 'inline-flex',
+              background: quest.is_penalty ? 'rgba(255,60,60,0.06)' : 'rgba(200,160,50,0.08)',
+              border: `1px solid ${quest.is_penalty ? 'rgba(255,60,60,0.2)' : 'rgba(200,160,50,0.25)'}`,
+            }}>
             <div className="w-10 h-10 rounded-sm flex items-center justify-center text-xl flex-shrink-0"
               style={{ background: meta.bg, border: `1px solid ${meta.color}40` }}>
               {STAT_ICONS[quest.stat] ?? '⭐'}
             </div>
             <div>
               <div className="text-[11px]" style={{ color: 'rgba(200,160,50,0.5)', fontFamily: "'Noto Serif SC', serif" }}>经验值</div>
-              <div className="text-lg font-bold" style={{ color: quest.is_penalty ? '#ff6060' : meta.color, fontFamily: "'Cinzel', serif" }}>
+              <div className="text-lg font-bold"
+                style={{ color: quest.is_penalty ? '#ff6060' : meta.color, fontFamily: "'Cinzel', serif" }}>
                 {quest.is_penalty ? `-${quest.xp_reward}` : `+${quest.xp_reward}`} {meta.zh}
               </div>
             </div>
           </div>
         </div>
 
+        {/* ── Status ── */}
         {quest.completed && (
           <div className="mt-5 flex items-center gap-2">
-            <span style={{ color: '#40c060', fontSize: '18px' }}>✓</span>
-            <span style={{ fontFamily: "'Noto Serif SC', serif", color: '#40c060', fontSize: '13px' }}>已完成</span>
+            <span style={{ color: quest.is_penalty ? '#ff6060' : '#40c060', fontSize: '18px' }}>
+              {quest.is_penalty ? '✗' : '✓'}
+            </span>
+            <span style={{ fontFamily: "'Noto Serif SC', serif", color: quest.is_penalty ? '#ff6060' : '#40c060', fontSize: '13px' }}>
+              {quest.is_penalty ? '已触发惩罚' : '已完成'}
+            </span>
           </div>
         )}
       </div>

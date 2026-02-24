@@ -28,6 +28,7 @@ export default defineSchema({
     completed: v.boolean(),
     date: v.string(),
     description: v.optional(v.string()),
+    lore: v.optional(v.string()),
     is_boss: v.optional(v.boolean()),
     is_penalty: v.optional(v.boolean()),
     deadline: v.optional(v.string()),
