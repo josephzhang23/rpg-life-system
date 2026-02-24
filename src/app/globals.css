@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #c8a040;
+  --gold-dim: rgba(200, 160, 60, 0.15);
+  --panel-bg: rgba(255, 255, 255, 0.03);
+  --panel-border: rgba(200, 160, 60, 0.12);
+  --int: #60a0ff;
+  --disc: #ff8040;
+  --str: #ff4060;
+  --soc: #40e080;
+  --cre: #c060ff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0a0a0f;
+  color: #e8d5a3;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: 15px;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(120,40,200,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(40,80,200,0.06) 0%, transparent 50%);
+}
+
+.font-cinzel { font-family: 'Cinzel', serif; }
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.panel-title {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(200, 160, 60, 0.15);
+}
+
+/* XP Bars */
+.bar-int    { background: linear-gradient(90deg, #2060c0, #60a0ff); }
+.bar-disc   { background: linear-gradient(90deg, #c04000, #ff8040); }
+.bar-str    { background: linear-gradient(90deg, #c00020, #ff4060); }
+.bar-soc    { background: linear-gradient(90deg, #008040, #40e080); }
+.bar-cre    { background: linear-gradient(90deg, #6020a0, #c060ff); }
+
+/* Stat colors */
+.text-int  { color: var(--int); }
+.text-disc { color: var(--disc); }
+.text-str  { color: var(--str); }
+.text-soc  { color: var(--soc); }
+.text-cre  { color: var(--cre); }
+
+.bg-int  { background: rgba(96,160,255,0.15); color: var(--int); }
+.bg-disc { background: rgba(255,128,64,0.15); color: var(--disc); }
+.bg-str  { background: rgba(255,64,96,0.15); color: var(--str); }
+.bg-soc  { background: rgba(64,224,128,0.15); color: var(--soc); }
+.bg-cre  { background: rgba(192,96,255,0.15); color: var(--cre); }
+
+/* XP gain animation */
+@keyframes xpFloat {
+  0%   { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-40px); }
+}
+.xp-float {
+  animation: xpFloat 1.5s ease-out forwards;
+  position: absolute;
+  font-weight: 700;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+@keyframes levelUp {
+  0%   { opacity: 0; transform: scale(0.8); }
+  20%  { opacity: 1; transform: scale(1.05); }
+  80%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.95); }
+}
+.levelup-toast {
+  animation: levelUp 3s ease forwards;
+}
