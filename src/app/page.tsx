@@ -102,6 +102,12 @@ function QuestRow({ quest, onComplete }: { quest: any; onComplete: (id: string) 
 
 /* ── Achievement badge ── */
 function AchievementBadge({ achievement }: { achievement: any }) {
+  const tooltip = achievement.unlocked
+    ? `解锁：${achievement.unlocked_at?.slice(0, 10)}`
+    : achievement.condition
+      ? `解锁条件：${achievement.condition}`
+      : "未解锁";
+
   return (
     <div
       className={`rounded-sm p-3 text-center border transition-all
@@ -109,14 +115,17 @@ function AchievementBadge({ achievement }: { achievement: any }) {
           ? "border-yellow-600/40 bg-yellow-900/10"
           : "border-white/[0.04] bg-white/[0.01] opacity-25"
         }`}
-      title={achievement.unlocked
-        ? `解锁：${achievement.unlocked_at?.slice(0, 10)}`
-        : "未解锁"}
+      title={tooltip}
     >
       <div className="text-xl mb-1">{achievement.icon}</div>
       <div className="text-[10px] tracking-wide" style={{ color: achievement.unlocked ? '#c8a040' : '#555' }}>
         {achievement.name}
       </div>
+      {!achievement.unlocked && achievement.condition && (
+        <div className="text-[9px] mt-1 leading-tight" style={{ color: 'rgba(200,160,50,0.35)' }}>
+          {achievement.condition}
+        </div>
+      )}
     </div>
   );
 }

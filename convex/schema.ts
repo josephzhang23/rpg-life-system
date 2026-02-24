@@ -36,5 +36,6 @@ export default defineSchema({
     icon: v.string(),
     unlocked: v.boolean(),
     unlocked_at: v.optional(v.string()),
+    condition: v.optional(v.string()),
   }),
 });

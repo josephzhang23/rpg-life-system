@@ -265,6 +265,7 @@ export const updateAchievement = mutation({
     key: v.string(),
     name: v.optional(v.string()),
     icon: v.optional(v.string()),
+    condition: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const achievement = (await ctx.db.query("achievements").collect()).find(
@@ -274,6 +275,7 @@ export const updateAchievement = mutation({
     const patch: any = {};
     if (args.name !== undefined) patch.name = args.name;
     if (args.icon !== undefined) patch.icon = args.icon;
+    if (args.condition !== undefined) patch.condition = args.condition;
     await ctx.db.patch(achievement._id, patch);
     return { ok: true };
   },
