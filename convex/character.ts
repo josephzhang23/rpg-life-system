@@ -379,6 +379,16 @@ export const updateQuestDescription = mutation({
   },
 });
 
+export const setQuestNote = mutation({
+  args: { questId: v.string(), note: v.string() },
+  handler: async (ctx, args) => {
+    const quest = await ctx.db.get(args.questId as any);
+    if (!quest) throw new Error("Quest not found");
+    await ctx.db.patch(quest._id, { note: args.note });
+    return { ok: true };
+  },
+});
+
 export const markQuestCompleted = mutation({
   args: { questId: v.string() },
   handler: async (ctx, args) => {

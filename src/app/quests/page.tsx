@@ -61,6 +61,14 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
           {quest.name}
         </h2>
 
+        {/* ── Completion note — what actually happened ── */}
+        {quest.note && (
+          <p className="text-sm mb-2 leading-relaxed font-semibold"
+            style={{ fontFamily: "'Noto Serif SC', serif", color: '#f0e0b0', lineHeight: '1.75' }}>
+            {quest.note}
+          </p>
+        )}
+
         {/* ── Objective — paragraph right under title (WoW style) ── */}
         {quest.description && (
           <p className="text-sm mb-3 leading-relaxed"
