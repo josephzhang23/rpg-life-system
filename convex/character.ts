@@ -300,23 +300,23 @@ export const addAchievement = mutation({
 // Default quest templates — regenerated each day
 const DAILY_QUEST_TEMPLATES = [
   { name: "Plan your top 3 priorities", stat: "DISC", xp_reward: 20,
-    description: "写下今天最重要的三件事，专注执行。",
-    lore: "真正的高手从不靠灵感，只靠系统。清单越短，执行力越强。今天写下的三件事，是你对自己最基本的承诺。" },
+    objective: "写下今天最重要的三件事，专注执行。",
+    description: "真正的高手从不靠灵感，只靠系统。清单越短，执行力越强。今天写下的三件事，是你对自己最基本的承诺。" },
   { name: "60 minutes deep work sprint", stat: "INT", xp_reward: 35,
-    description: "不间断专注工作 60 分钟，关闭一切干扰。",
-    lore: "心流不是等来的，是逼出来的。前十分钟最难，撑过去之后大脑会进入另一个频道。一天一次，智力就在悄悄复利。" },
+    objective: "不间断专注工作 60 分钟，关闭一切干扰。",
+    description: "心流不是等来的，是逼出来的。前十分钟最难，撑过去之后大脑会进入另一个频道。一天一次，智力就在悄悄复利。" },
   { name: "Workout / movement session", stat: "STR", xp_reward: 30,
-    description: "完成任意形式的体能训练。",
-    lore: "身体是你唯一不能外包的资产。健身房、跑步、游泳——形式不重要，动起来才算数。" },
+    objective: "完成任意形式的体能训练。",
+    description: "身体是你唯一不能外包的资产。健身房、跑步、游泳——形式不重要，动起来才算数。" },
   { name: "Meaningful outreach or connection", stat: "SOC", xp_reward: 25,
-    description: "主动联系一个有价值的人。",
-    lore: "网络效应不只属于产品，也属于人。每一次主动出击都是在构建你的社交护城河。" },
+    objective: "主动联系一个有价值的人。",
+    description: "网络效应不只属于产品，也属于人。每一次主动出击都是在构建你的社交护城河。" },
   { name: "Create something publishable", stat: "CRE", xp_reward: 40,
-    description: "创造并发布一件有价值的作品。",
-    lore: "发布的那一刻，作品才真正存在。再好的想法，没有发布都是幻觉。代码、内容、功能——上线才算完成。" },
+    objective: "创造并发布一件有价值的作品。",
+    description: "发布的那一刻，作品才真正存在。再好的想法，没有发布都是幻觉。代码、内容、功能——上线才算完成。" },
   { name: "Push a commit", stat: "CRE", xp_reward: 30,
-    description: "向代码仓库提交至少一个 commit。",
-    lore: "代码库里的每一个 commit 都是你存在的证明。不提交，就等于不战斗。" },
+    objective: "向代码仓库提交至少一个 commit。",
+    description: "代码库里的每一个 commit 都是你存在的证明。不提交，就等于不战斗。" },
 ];
 
 // ── Quest Catalog ──────────────────────────────────────────
@@ -336,8 +336,8 @@ export const upsertCatalogEntry = mutation({
     xp: v.number(),
     is_penalty: v.boolean(),
     category: v.string(),
+    objective: v.optional(v.string()),
     description: v.optional(v.string()),
-    lore: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const existing = (await ctx.db.query("quest_catalog").collect()).find(
@@ -366,14 +366,31 @@ export const deleteCatalogEntry = mutation({
 
 // ── Quest Description / Lore ───────────────────────────────
 
+export const clearLegacyLoreFields = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const quests = await ctx.db.query("quests").collect();
+    for (const q of quests as any[]) {
+      if (q.lore !== undefined) await ctx.db.patch(q._id, { lore: undefined });
+    }
+    const catalog = await ctx.db.query("quest_catalog").collect();
+    for (const e of catalog as any[]) {
+      if (e.lore !== undefined) await ctx.db.patch(e._id, { lore: undefined });
+    }
+    return { ok: true, quests: quests.length, catalog: catalog.length };
+  },
+});
+
 export const updateQuestDescription = mutation({
-  args: { questId: v.string(), description: v.optional(v.string()), lore: v.optional(v.string()) },
+  args: { questId: v.string(), objective: v.optional(v.string()), description: v.optional(v.string()), lore: v.optional(v.string()) },
   handler: async (ctx, args) => {
     const quest = await ctx.db.get(args.questId as any);
     if (!quest) throw new Error("Quest not found");
     const patch: any = {};
+    if (args.objective !== undefined) patch.objective = args.objective;
     if (args.description !== undefined) patch.description = args.description;
-    if (args.lore !== undefined) patch.lore = args.lore;
+    // lore is legacy alias for description
+    if (args.lore !== undefined) patch.description = args.lore;
     await ctx.db.patch(quest._id, patch);
     return { ok: true };
   },
@@ -413,8 +430,8 @@ export const addQuestToday = mutation({
     name: v.string(),
     stat: v.string(),
     xp_reward: v.number(),
+    objective: v.optional(v.string()),
     description: v.optional(v.string()),
-    lore: v.optional(v.string()),
     is_penalty: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
@@ -427,8 +444,8 @@ export const addQuestToday = mutation({
       name: args.name,
       stat: args.stat,
       xp_reward: args.xp_reward,
+      objective: args.objective,
       description: args.description,
-      lore: args.lore,
       completed: false,
       date: today,
       is_boss: false,
@@ -462,8 +479,8 @@ export const generateDailyQuests = mutation({
         name: template.name,
         stat: template.stat,
         xp_reward: template.xp_reward,
-        description: template.description,
-        lore: (template as any).lore,
+        objective: template.objective,
+        description: (template as any).description,
         completed: false,
         date: today,
         is_boss: false,

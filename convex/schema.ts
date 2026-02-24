@@ -27,9 +27,9 @@ export default defineSchema({
     xp_reward: v.number(),
     completed: v.boolean(),
     date: v.string(),
-    description: v.optional(v.string()),
-    lore: v.optional(v.string()),
-    note: v.optional(v.string()),
+    objective: v.optional(v.string()),    // short text under title
+    description: v.optional(v.string()),  // longer flavor text in Description section
+    note: v.optional(v.string()),         // completion note: what was actually done
     is_boss: v.optional(v.boolean()),
     is_penalty: v.optional(v.boolean()),
     deadline: v.optional(v.string()),
@@ -37,13 +37,12 @@ export default defineSchema({
   quest_catalog: defineTable({
     name: v.string(),
     stat: v.string(),
-    xp: v.number(),              // positive = reward, negative = penalty
+    xp: v.number(),
     is_penalty: v.boolean(),
-    category: v.string(),        // e.g. "health", "fitness", "coding", "social"
+    category: v.string(),
+    objective: v.optional(v.string()),
     description: v.optional(v.string()),
-    lore: v.optional(v.string()),
   }),
-
   achievements: defineTable({
     key: v.string(),
     name: v.string(),

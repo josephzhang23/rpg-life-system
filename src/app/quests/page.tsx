@@ -62,10 +62,10 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
         </h2>
 
         {/* ── Objective — paragraph right under title (WoW style) ── */}
-        {quest.description && (
+        {quest.objective && (
           <p className="text-sm mb-3 leading-relaxed"
             style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8b87a', lineHeight: '1.75' }}>
-            {quest.description}
+            {quest.objective}
           </p>
         )}
 
@@ -77,15 +77,15 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
 
         <div className="wow-divider" />
 
-        {/* ── Description / Lore (WoW's "Description" section) ── */}
-        {quest.lore && (
+        {/* ── Description (WoW's "Description" section) ── */}
+        {quest.description && (
           <>
             <div className="mt-4 mb-4">
               <div className="text-[11px] tracking-[3px] mb-3 font-bold uppercase"
                 style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>描述</div>
               <p className="text-sm leading-relaxed"
                 style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
-                {quest.lore}
+                {quest.description}
               </p>
             </div>
             <div className="wow-divider" />
