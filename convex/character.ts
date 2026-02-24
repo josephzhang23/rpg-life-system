@@ -313,6 +313,16 @@ const DAILY_QUEST_TEMPLATES = [
   { name: "Push a commit", stat: "CRE", xp_reward: 30 },
 ];
 
+export const markQuestCompleted = mutation({
+  args: { questId: v.string() },
+  handler: async (ctx, args) => {
+    const quest = await ctx.db.get(args.questId as any);
+    if (!quest) throw new Error("Quest not found");
+    await ctx.db.patch(quest._id, { completed: true });
+    return { ok: true };
+  },
+});
+
 export const getAllQuests = query({
   args: {},
   handler: async (ctx) => {
