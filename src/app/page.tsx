@@ -102,76 +102,79 @@ function QuestRow({ quest, onComplete }: { quest: any; onComplete: (id: string) 
 
 /* ── Achievement badge ── */
 function AchievementRow({ achievement }: { achievement: any }) {
+  const locked = !achievement.unlocked;
   return (
     <div
-      className={`flex items-center gap-3 px-3 py-[10px] rounded-sm transition-all
-        ${achievement.unlocked
-          ? "bg-yellow-900/10 border border-yellow-700/25"
-          : "bg-white/[0.015] border border-white/[0.04]"
-        }`}
+      className="flex items-center gap-3 px-3 py-3"
+      style={{
+        background: locked
+          ? 'linear-gradient(90deg, rgba(30,22,10,0.9), rgba(25,18,8,0.9))'
+          : 'linear-gradient(90deg, rgba(50,35,8,0.95), rgba(40,28,6,0.95))',
+        borderTop: '1px solid rgba(200,160,50,0.12)',
+        borderBottom: '1px solid rgba(0,0,0,0.4)',
+      }}
     >
-      {/* Icon frame — WoW style */}
+      {/* Icon — WoW square frame */}
       <div
-        className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-sm text-xl"
+        className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-2xl rounded-sm"
         style={{
-          background: achievement.unlocked
-            ? 'linear-gradient(135deg, #2a1f00, #1a1200)'
-            : 'rgba(20,20,20,0.6)',
-          border: achievement.unlocked
-            ? '1px solid rgba(200,160,50,0.5)'
-            : '1px solid rgba(255,255,255,0.06)',
-          boxShadow: achievement.unlocked
-            ? 'inset 0 0 6px rgba(200,120,0,0.2)'
-            : 'none',
-          filter: achievement.unlocked ? 'none' : 'grayscale(1) brightness(0.4)',
+          background: 'linear-gradient(135deg, #1a1208, #0e0c06)',
+          border: '2px solid',
+          borderColor: locked ? 'rgba(80,60,20,0.5)' : 'rgba(160,120,30,0.8)',
+          boxShadow: locked
+            ? 'inset 0 0 8px rgba(0,0,0,0.6)'
+            : 'inset 0 0 8px rgba(180,120,0,0.2), 0 0 4px rgba(160,120,30,0.3)',
+          filter: locked ? 'grayscale(0.8) brightness(0.5)' : 'none',
         }}
       >
         {achievement.icon}
       </div>
 
-      {/* Name + condition */}
-      <div className="flex-1 min-w-0">
+      {/* Name + description — centered block */}
+      <div className="flex-1 min-w-0 text-center px-2">
         <div
-          className="text-sm font-semibold leading-tight truncate"
+          className="text-[15px] font-semibold leading-snug"
           style={{
             fontFamily: "'Noto Serif SC', serif",
-            color: achievement.unlocked ? '#f0c060' : 'rgba(232,213,163,0.3)',
+            color: locked ? 'rgba(200,170,100,0.35)' : '#f0e0b0',
+            textShadow: locked ? 'none' : '0 1px 3px rgba(0,0,0,0.8)',
           }}
         >
           {achievement.name}
         </div>
-        {achievement.condition && (
-          <div
-            className="text-[11px] mt-[2px] truncate"
-            style={{
-              fontFamily: "'Noto Serif SC', serif",
-              color: achievement.unlocked
-                ? 'rgba(232,213,163,0.5)'
-                : 'rgba(232,213,163,0.2)',
-            }}
-          >
-            {achievement.unlocked
-              ? `解锁于 ${achievement.unlocked_at?.slice(0, 10)}`
-              : `解锁条件：${achievement.condition}`}
-          </div>
-        )}
+        <div
+          className="text-[11px] mt-[3px] leading-snug"
+          style={{
+            fontFamily: "'Noto Serif SC', serif",
+            color: locked ? 'rgba(180,150,80,0.25)' : 'rgba(210,185,130,0.6)',
+          }}
+        >
+          {achievement.unlocked
+            ? `解锁于 ${achievement.unlocked_at?.slice(0, 10)}`
+            : achievement.condition
+              ? achievement.condition
+              : '完成特定目标解锁'}
+        </div>
       </div>
 
-      {/* Shield badge */}
+      {/* Circular badge — WoW coin style */}
       <div
-        className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-sm text-[10px] font-bold"
+        className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold"
         style={{
-          background: achievement.unlocked
-            ? 'linear-gradient(135deg, #5a3a00, #3a2000)'
-            : 'rgba(30,30,30,0.5)',
-          border: achievement.unlocked
-            ? '1px solid rgba(200,160,50,0.6)'
-            : '1px solid rgba(255,255,255,0.05)',
-          color: achievement.unlocked ? '#f0c060' : 'rgba(255,255,255,0.15)',
+          background: locked
+            ? 'radial-gradient(circle, #2a2010 0%, #1a1408 100%)'
+            : 'radial-gradient(circle, #6a4a00 0%, #3a2800 100%)',
+          border: '2px solid',
+          borderColor: locked ? 'rgba(80,65,25,0.5)' : 'rgba(200,160,50,0.8)',
+          boxShadow: locked
+            ? 'inset 0 1px 3px rgba(0,0,0,0.6)'
+            : 'inset 0 1px 3px rgba(255,200,50,0.15), 0 0 6px rgba(180,130,0,0.3)',
+          color: locked ? 'rgba(140,110,40,0.4)' : '#f0c060',
           fontFamily: "'Cinzel', serif",
+          fontSize: locked ? '14px' : '13px',
         }}
       >
-        {achievement.unlocked ? '✓' : '🔒'}
+        {locked ? '—' : '✦'}
       </div>
     </div>
   );
@@ -472,17 +475,26 @@ export default function Dashboard() {
         </div>
 
         {/* 成就 — full width */}
-        <div className="panel md:col-span-2">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="panel-title mb-0">🏆 成就</span>
-            <span
-              className="ml-auto text-[11px]"
-              style={{ color: 'rgba(200,160,50,0.45)', fontFamily: "'Noto Serif SC', serif" }}
-            >
+        <div className="md:col-span-2 rounded-sm overflow-hidden"
+          style={{ border: '1px solid rgba(200,160,50,0.3)', background: '#0e0a05' }}
+        >
+          {/* Header */}
+          <div
+            className="flex items-center justify-between px-4 py-3"
+            style={{
+              background: 'linear-gradient(90deg, rgba(60,40,5,0.9), rgba(40,28,4,0.9))',
+              borderBottom: '1px solid rgba(200,160,50,0.25)',
+            }}
+          >
+            <span style={{ fontFamily: "'Noto Serif SC', serif", color: '#f0c060', fontSize: '11px', letterSpacing: '3px', fontWeight: 700 }}>
+              🏆 成就
+            </span>
+            <span style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,160,50,0.5)', fontSize: '11px' }}>
               {(achievements ?? []).filter((a: any) => a.unlocked).length} / {(achievements ?? []).length} 已解锁
             </span>
           </div>
-          <div className="flex flex-col gap-2">
+          {/* Rows */}
+          <div className="flex flex-col">
             {(achievements ?? []).map((a: any) => (
               <AchievementRow key={a._id} achievement={a} />
             ))}
