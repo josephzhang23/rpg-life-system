@@ -313,6 +313,15 @@ const DAILY_QUEST_TEMPLATES = [
   { name: "Push a commit", stat: "CRE", xp_reward: 30 },
 ];
 
+export const getAllQuests = query({
+  args: {},
+  handler: async (ctx) => {
+    const quests = await ctx.db.query("quests").collect();
+    quests.sort((a: any, b: any) => b.date.localeCompare(a.date));
+    return quests;
+  },
+});
+
 export const addQuestToday = mutation({
   args: {
     name: v.string(),

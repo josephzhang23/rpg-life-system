@@ -3,6 +3,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useState, useCallback, useEffect } from "react";
+import Link from "next/link";
 
 /* ── Stat metadata with Chinese names ── */
 const STAT_META: Record<string, {
@@ -506,11 +507,25 @@ export default function Dashboard() {
       </div>
 
       {/* Footer */}
-      <div
-        className="mt-8 text-center text-xs tracking-[3px]"
-        style={{ color: 'rgba(200,160,50,0.25)', fontFamily: "'Noto Serif SC', serif" }}
-      >
-        人生 RPG 系统 · 创始人版
+      <div className="mt-8 flex flex-col items-center gap-4">
+        <Link
+          href="/quests"
+          className="flex items-center gap-2 px-5 py-2 rounded-sm text-sm transition-all hover:opacity-80"
+          style={{
+            fontFamily: "'Noto Serif SC', serif",
+            color: '#c8a040',
+            background: 'rgba(200,160,50,0.08)',
+            border: '1px solid rgba(200,160,50,0.3)',
+          }}
+        >
+          📖 任务日志
+        </Link>
+        <div
+          className="text-xs tracking-[3px]"
+          style={{ color: 'rgba(200,160,50,0.2)', fontFamily: "'Noto Serif SC', serif" }}
+        >
+          人生 RPG 系统 · 创始人版
+        </div>
       </div>
 
     </div>
