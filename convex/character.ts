@@ -366,20 +366,6 @@ export const deleteCatalogEntry = mutation({
 
 // ── Quest Description / Lore ───────────────────────────────
 
-export const clearLegacyLoreFields = mutation({
-  args: {},
-  handler: async (ctx) => {
-    const quests = await ctx.db.query("quests").collect();
-    for (const q of quests as any[]) {
-      if (q.lore !== undefined) await ctx.db.patch(q._id, { lore: undefined });
-    }
-    const catalog = await ctx.db.query("quest_catalog").collect();
-    for (const e of catalog as any[]) {
-      if (e.lore !== undefined) await ctx.db.patch(e._id, { lore: undefined });
-    }
-    return { ok: true, quests: quests.length, catalog: catalog.length };
-  },
-});
 
 export const updateQuestDescription = mutation({
   args: { questId: v.string(), objective: v.optional(v.string()), description: v.optional(v.string()), lore: v.optional(v.string()) },
