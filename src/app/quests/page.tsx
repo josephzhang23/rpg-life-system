@@ -74,7 +74,6 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
             style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a060', lineHeight: '1.8' }}>
             {quest.is_boss
               ? '这是一场首领战。在截止日期前完成以获得奖励。'
-              : quest.completed ? '✅ 任务已完成。'
               : '完成此任务以获得经验值奖励。'}
           </p>
         </div>
