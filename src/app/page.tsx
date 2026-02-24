@@ -101,31 +101,78 @@ function QuestRow({ quest, onComplete }: { quest: any; onComplete: (id: string) 
 }
 
 /* ── Achievement badge ── */
-function AchievementBadge({ achievement }: { achievement: any }) {
-  const tooltip = achievement.unlocked
-    ? `解锁：${achievement.unlocked_at?.slice(0, 10)}`
-    : achievement.condition
-      ? `解锁条件：${achievement.condition}`
-      : "未解锁";
-
+function AchievementRow({ achievement }: { achievement: any }) {
   return (
     <div
-      className={`rounded-sm p-3 text-center border transition-all
+      className={`flex items-center gap-3 px-3 py-[10px] rounded-sm transition-all
         ${achievement.unlocked
-          ? "border-yellow-600/40 bg-yellow-900/10"
-          : "border-white/[0.04] bg-white/[0.01] opacity-25"
+          ? "bg-yellow-900/10 border border-yellow-700/25"
+          : "bg-white/[0.015] border border-white/[0.04]"
         }`}
-      title={tooltip}
     >
-      <div className="text-xl mb-1">{achievement.icon}</div>
-      <div className="text-[10px] tracking-wide" style={{ color: achievement.unlocked ? '#c8a040' : '#555' }}>
-        {achievement.name}
+      {/* Icon frame — WoW style */}
+      <div
+        className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-sm text-xl"
+        style={{
+          background: achievement.unlocked
+            ? 'linear-gradient(135deg, #2a1f00, #1a1200)'
+            : 'rgba(20,20,20,0.6)',
+          border: achievement.unlocked
+            ? '1px solid rgba(200,160,50,0.5)'
+            : '1px solid rgba(255,255,255,0.06)',
+          boxShadow: achievement.unlocked
+            ? 'inset 0 0 6px rgba(200,120,0,0.2)'
+            : 'none',
+          filter: achievement.unlocked ? 'none' : 'grayscale(1) brightness(0.4)',
+        }}
+      >
+        {achievement.icon}
       </div>
-      {!achievement.unlocked && achievement.condition && (
-        <div className="text-[9px] mt-1 leading-tight" style={{ color: 'rgba(200,160,50,0.35)' }}>
-          {achievement.condition}
+
+      {/* Name + condition */}
+      <div className="flex-1 min-w-0">
+        <div
+          className="text-sm font-semibold leading-tight truncate"
+          style={{
+            fontFamily: "'Noto Serif SC', serif",
+            color: achievement.unlocked ? '#f0c060' : 'rgba(232,213,163,0.3)',
+          }}
+        >
+          {achievement.name}
         </div>
-      )}
+        {achievement.condition && (
+          <div
+            className="text-[11px] mt-[2px] truncate"
+            style={{
+              fontFamily: "'Noto Serif SC', serif",
+              color: achievement.unlocked
+                ? 'rgba(232,213,163,0.5)'
+                : 'rgba(232,213,163,0.2)',
+            }}
+          >
+            {achievement.unlocked
+              ? `解锁于 ${achievement.unlocked_at?.slice(0, 10)}`
+              : `解锁条件：${achievement.condition}`}
+          </div>
+        )}
+      </div>
+
+      {/* Shield badge */}
+      <div
+        className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-sm text-[10px] font-bold"
+        style={{
+          background: achievement.unlocked
+            ? 'linear-gradient(135deg, #5a3a00, #3a2000)'
+            : 'rgba(30,30,30,0.5)',
+          border: achievement.unlocked
+            ? '1px solid rgba(200,160,50,0.6)'
+            : '1px solid rgba(255,255,255,0.05)',
+          color: achievement.unlocked ? '#f0c060' : 'rgba(255,255,255,0.15)',
+          fontFamily: "'Cinzel', serif",
+        }}
+      >
+        {achievement.unlocked ? '✓' : '🔒'}
+      </div>
     </div>
   );
 }
@@ -424,12 +471,20 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* 成就 */}
-        <div className="panel">
-          <div className="panel-title">🏆 成就</div>
-          <div className="grid grid-cols-4 gap-2">
+        {/* 成就 — full width */}
+        <div className="panel md:col-span-2">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="panel-title mb-0">🏆 成就</span>
+            <span
+              className="ml-auto text-[11px]"
+              style={{ color: 'rgba(200,160,50,0.45)', fontFamily: "'Noto Serif SC', serif" }}
+            >
+              {(achievements ?? []).filter((a: any) => a.unlocked).length} / {(achievements ?? []).length} 已解锁
+            </span>
+          </div>
+          <div className="flex flex-col gap-2">
             {(achievements ?? []).map((a: any) => (
-              <AchievementBadge key={a._id} achievement={a} />
+              <AchievementRow key={a._id} achievement={a} />
             ))}
           </div>
         </div>
