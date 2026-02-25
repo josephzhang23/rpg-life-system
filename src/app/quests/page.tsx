@@ -69,6 +69,14 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
           </p>
         )}
 
+        {/* ── Note — completion record, right under objective ── */}
+        {quest.note && (
+          <p className="text-sm mb-3 leading-relaxed"
+            style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8b87a', lineHeight: '1.75' }}>
+            {quest.note}
+          </p>
+        )}
+
         {/* Date / type */}
         <div className="text-[11px] mb-4" style={{ color: 'rgba(200,160,50,0.4)', fontFamily: "'Noto Serif SC', serif" }}>
           {quest.is_boss ? '⚠️ 首领战' : quest.is_penalty ? '💀 惩罚任务' : `📅 ${quest.date}`}
@@ -86,20 +94,6 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
               <p className="text-sm leading-relaxed"
                 style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
                 {quest.description}
-              </p>
-            </div>
-            <div className="wow-divider" />
-          </>
-        )}
-
-        {quest.note && (
-          <>
-            <div className="mt-4 mb-4">
-              <div className="text-[11px] tracking-[3px] mb-3 font-bold uppercase"
-                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>完成记录</div>
-              <p className="text-sm leading-relaxed"
-                style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
-                {quest.note}
               </p>
             </div>
             <div className="wow-divider" />

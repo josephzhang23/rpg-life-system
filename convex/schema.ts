@@ -6,6 +6,7 @@ export default defineSchema({
     name: v.string(),
     class: v.string(),
     overall_level: v.number(),
+    overall_total_xp: v.optional(v.number()),
     last_updated: v.string(),
   }),
   stats: defineTable({
@@ -50,5 +51,25 @@ export default defineSchema({
     unlocked: v.boolean(),
     unlocked_at: v.optional(v.string()),
     condition: v.optional(v.string()),
+  }),
+  abilities: defineTable({
+    name: v.string(),
+    icon: v.string(),
+    type: v.string(),       // "active" | "passive"
+    category: v.string(),   // "ai" | "dev" | "infra" | "productivity"
+    description: v.string(),
+    lore: v.optional(v.string()),
+    stat_bonuses: v.optional(v.array(v.object({ stat: v.string(), value: v.number() }))),
+    cooldown: v.optional(v.string()),  // flavor text e.g. "无冷却", "每日"
+  }),
+  equipment: defineTable({
+    slot: v.string(),          // e.g. "main_hand"
+    slot_zh: v.string(),       // e.g. "主手武器"
+    name: v.string(),          // e.g. "MacBook Pro M2 Max 14\""
+    quality: v.string(),       // grey|white|green|blue|purple|orange
+    icon: v.optional(v.string()),
+    stat_bonuses: v.optional(v.array(v.object({ stat: v.string(), value: v.number() }))),
+    description: v.optional(v.string()),
+    lore: v.optional(v.string()),
   }),
 });

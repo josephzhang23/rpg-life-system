@@ -19,21 +19,34 @@ function nowISO() {
   return new Date().toISOString();
 }
 
+// Overall level is derived from total XP across all stats.
+// XP needed for level n → n+1: n * 500
+// Cumulative to reach level n: 500 * n * (n-1) / 2
+function levelFromTotalXp(totalXp: number): { level: number; xpInLevel: number; xpNeeded: number } {
+  let level = 1;
+  let remaining = totalXp;
+  while (remaining >= level * 500) {
+    remaining -= level * 500;
+    level++;
+  }
+  return { level, xpInLevel: remaining, xpNeeded: level * 500 };
+}
+
 async function recalcCharacterLevel(ctx: any) {
   const stats = await ctx.db.query("stats").collect();
-  const avg = stats.length
-    ? Math.round(stats.reduce((sum: number, s: any) => sum + s.level, 0) / stats.length)
-    : 1;
+  const totalXp = stats.reduce((sum: number, s: any) => sum + (s.total_xp ?? 0), 0);
+  const { level } = levelFromTotalXp(totalXp);
 
   const existing = (await ctx.db.query("character").collect())[0];
-  if (!existing) return avg;
+  if (!existing) return level;
 
   await ctx.db.patch(existing._id, {
-    overall_level: avg,
+    overall_level: level,
+    overall_total_xp: totalXp,
     last_updated: nowISO(),
   });
 
-  return avg;
+  return level;
 }
 
 async function applyXpToStat(ctx: any, statId: string, amount: number) {
@@ -123,20 +136,28 @@ export const completeQuest = mutation({
 export const getDashboard = query({
   args: {},
   handler: async (ctx) => {
-    const [character, stats, streaks, achievements, quests] = await Promise.all([
+    const [character, stats, streaks, achievements, quests, equipment] = await Promise.all([
       ctx.db.query("character").collect(),
       ctx.db.query("stats").collect(),
       ctx.db.query("streaks").collect(),
       ctx.db.query("achievements").collect(),
       ctx.db.query("quests").collect(),
+      ctx.db.query("equipment").collect(),
     ]);
 
     const today = todayISO();
     const questsToday = quests.filter((q: any) => q.date === today && !q.is_boss);
     const activeBoss = quests.find((q: any) => q.is_boss && !q.completed) ?? null;
-    const overallLevel = stats.length
-      ? Math.round(stats.reduce((sum: number, s: any) => sum + s.level, 0) / stats.length)
-      : 1;
+    const totalXp = stats.reduce((sum: number, s: any) => sum + (s.total_xp ?? 0), 0);
+    const { level: overallLevel, xpInLevel: overallXpInLevel, xpNeeded: overallXpNeeded } = levelFromTotalXp(totalXp);
+
+    // Sum all equipment stat bonuses
+    const equipmentBonuses: Record<string, number> = {};
+    for (const item of equipment) {
+      for (const b of (item.stat_bonuses ?? [])) {
+        equipmentBonuses[b.stat] = (equipmentBonuses[b.stat] ?? 0) + b.value;
+      }
+    }
 
     return {
       character: character[0] ?? null,
@@ -146,6 +167,10 @@ export const getDashboard = query({
       activeBoss,
       achievements,
       overallLevel,
+      overallTotalXp: totalXp,
+      overallXpInLevel,
+      overallXpNeeded,
+      equipmentBonuses,
       today,
     };
   },
@@ -474,5 +499,85 @@ export const generateDailyQuests = mutation({
     }
 
     return { ok: true, generated: true, count: DAILY_QUEST_TEMPLATES.length, date: today };
+  },
+});
+
+// ── Equipment ──────────────────────────────────────────────────────────────
+
+export const getEquipment = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("equipment").collect();
+  },
+});
+
+export const upsertEquipmentSlot = mutation({
+  args: {
+    slot: v.string(),
+    slot_zh: v.string(),
+    name: v.string(),
+    quality: v.string(),
+    icon: v.optional(v.string()),
+    stat_bonuses: v.optional(v.array(v.object({ stat: v.string(), value: v.number() }))),
+    description: v.optional(v.string()),
+    lore: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const existing = (await ctx.db.query("equipment").collect()).find((e: any) => e.slot === args.slot);
+    if (existing) {
+      await ctx.db.patch(existing._id, args);
+    } else {
+      await ctx.db.insert("equipment", args as any);
+    }
+    return { ok: true };
+  },
+});
+
+export const clearEquipmentSlot = mutation({
+  args: { slot: v.string() },
+  handler: async (ctx, args) => {
+    const existing = (await ctx.db.query("equipment").collect()).find((e: any) => e.slot === args.slot);
+    if (existing) await ctx.db.delete(existing._id);
+    return { ok: true };
+  },
+});
+
+// ── Abilities ──────────────────────────────────────────────────────────────
+
+export const getAbilities = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("abilities").collect();
+  },
+});
+
+export const upsertAbility = mutation({
+  args: {
+    name: v.string(),
+    icon: v.string(),
+    type: v.string(),
+    category: v.string(),
+    description: v.string(),
+    lore: v.optional(v.string()),
+    stat_bonuses: v.optional(v.array(v.object({ stat: v.string(), value: v.number() }))),
+    cooldown: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const existing = (await ctx.db.query("abilities").collect()).find((a: any) => a.name === args.name);
+    if (existing) {
+      await ctx.db.patch(existing._id, args);
+    } else {
+      await ctx.db.insert("abilities", args as any);
+    }
+    return { ok: true };
+  },
+});
+
+export const deleteAbility = mutation({
+  args: { name: v.string() },
+  handler: async (ctx, args) => {
+    const existing = (await ctx.db.query("abilities").collect()).find((a: any) => a.name === args.name);
+    if (existing) await ctx.db.delete(existing._id);
+    return { ok: true };
   },
 });

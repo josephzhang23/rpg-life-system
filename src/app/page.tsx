@@ -30,10 +30,14 @@ const STREAK_META: Record<string, { icon: string; zh: string }> = {
 };
 
 /* ── WoW-style XP bar ── */
-function XpBar({ stat, xp, level }: { stat: string; xp: number; level: number }) {
+function StatValue({ stat, value, bonus = 0 }: { stat: string; value: number; bonus?: number }) {
   const meta = STAT_META[stat];
-  const max = level * 100;
-  const pct = Math.min((xp / max) * 100, 100);
+  // Base: floor(sqrt(total_xp) * 3)
+  const raw = Math.sqrt(value) * 3;
+  const base = Math.floor(raw);
+  const total = base + bonus;
+  // Progress bar: fractional progress to next integer point
+  const pct = value === 0 ? 0 : (raw - base) * 100;
 
   return (
     <div className="flex items-center gap-3 mb-4 last:mb-0">
@@ -41,25 +45,33 @@ function XpBar({ stat, xp, level }: { stat: string; xp: number; level: number })
       <span className="text-base w-6 text-center flex-shrink-0">{meta.icon}</span>
 
       {/* Chinese name */}
-      <span className={`font-zh text-sm font-bold w-8 flex-shrink-0 ${meta.text}`} style={{ fontFamily: "'Noto Serif SC', serif" }}>
+      <span className="text-sm font-bold w-8 flex-shrink-0"
+        style={{ fontFamily: "'Noto Serif SC', serif", color: '#d4b87a' }}>
         {meta.zh}
       </span>
 
-      {/* Level badge */}
-      <span className="level-badge flex-shrink-0">Lv.{level}</span>
-
       {/* Bar */}
-      <div className="flex-1 h-[8px] bg-white/[0.06] rounded-sm overflow-hidden border border-white/[0.04]">
+      <div className="flex-1 h-[6px] rounded-sm overflow-hidden border border-white/[0.04]"
+        style={{ background: 'rgba(255,255,255,0.04)' }}>
         <div
           className={`h-full rounded-sm transition-all duration-700 ${meta.bar}`}
           style={{ width: `${pct}%` }}
         />
       </div>
 
-      {/* XP numbers */}
-      <span className="text-[11px] tabular-nums flex-shrink-0" style={{ color: 'rgba(232,213,163,0.5)', minWidth: '52px', textAlign: 'right' }}>
-        {xp}/{max}
-      </span>
+      {/* Total value + gear bonus indicator */}
+      <div className="flex items-baseline gap-1 flex-shrink-0" style={{ minWidth: '64px', justifyContent: 'flex-end' }}>
+        <span className="text-base font-bold tabular-nums"
+          style={{ color: bonus > 0 ? '#ffd700' : meta.color, fontFamily: "'Cinzel', serif" }}>
+          {total}
+        </span>
+        {bonus > 0 && (
+          <span className="text-[10px] tabular-nums"
+            style={{ color: meta.color, fontFamily: "'Cinzel', serif", opacity: 0.7 }}>
+            ({base}+{bonus})
+          </span>
+        )}
+      </div>
     </div>
   );
 }
@@ -213,11 +225,10 @@ export default function Dashboard() {
     const result = await completeQuest({ questId });
     if (result && result.xpResult) {
       const { xpResult } = result;
-      const oldLevel = data?.stats?.find((s: any) => s.stat_id === xpResult.statId)?.level ?? 1;
-      if (xpResult.level > oldLevel) {
-        const meta = STAT_META[xpResult.statId];
-        setLevelUpMsg(`⬆️ 等级提升 — ${meta?.zh ?? xpResult.statId} → Lv.${xpResult.level}`);
-        setTimeout(() => setLevelUpMsg(null), 3500);
+      const oldOverallLevel = data?.overallLevel ?? 1;
+      if ((xpResult.overall_level ?? 0) > oldOverallLevel) {
+        setLevelUpMsg(`🎉 人物升级 — Lv.${xpResult.overall_level}`);
+        setTimeout(() => setLevelUpMsg(null), 4000);
       }
     }
   }, [completeQuest, data]);
@@ -270,7 +281,7 @@ export default function Dashboard() {
     );
   }
 
-  const { character, stats, streaks, questsToday, activeBoss, achievements, overallLevel, today } = data;
+  const { character, stats, streaks, questsToday, activeBoss, achievements, overallLevel, overallTotalXp, overallXpInLevel, overallXpNeeded, equipmentBonuses, today } = data;
   const streakMap = Object.fromEntries((streaks ?? []).map((s: any) => [s.type, s.count]));
 
   const todayFormatted = new Date(today + "T00:00:00").toLocaleDateString("zh-CN", {
@@ -304,53 +315,86 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── Header ── */}
-      <div
-        className="flex items-center gap-5 mb-6 pb-5"
-        style={{ borderBottom: '1px solid rgba(200,160,50,0.25)' }}
-      >
-        {/* Avatar */}
-        <div
-          className="w-16 h-16 rounded-sm flex items-center justify-center text-3xl flex-shrink-0"
-          style={{
-            background: 'linear-gradient(135deg, #1a0f00, #0a0805)',
-            border: '1px solid rgba(200,160,50,0.5)',
-            boxShadow: '0 0 16px rgba(200,120,0,0.2), inset 0 0 8px rgba(0,0,0,0.4)',
-          }}
-        >
-          ⚔️
-        </div>
+      {/* ── Header — WoW name panel style ── */}
+      <div className="mb-6 pb-5" style={{ borderBottom: '1px solid rgba(200,160,50,0.25)' }}>
+        <div className="flex gap-3" style={{ alignItems: 'stretch' }}>
 
-        {/* Name + class */}
-        <div className="min-w-0">
-          <h1
-            className="text-xl tracking-[3px] truncate"
-            style={{ fontFamily: "'Cinzel', serif", color: '#f0c060' }}
+          {/* Avatar — circular WoW portrait */}
+          <div
+            className="flex-shrink-0 flex items-center justify-center text-3xl"
+            style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle at 35% 30%, #2a1a05, #0a0805)',
+              border: '2px solid #c8a030',
+              boxShadow: '0 0 0 1px rgba(200,160,50,0.25), 0 0 16px rgba(200,120,0,0.3), inset 0 0 12px rgba(0,0,0,0.6)',
+              alignSelf: 'center',
+            }}
           >
-            {character.name.toUpperCase()}
-          </h1>
-          <div className="flex items-center gap-2 mt-1">
-            <span
-              className="px-2 py-[2px] text-[11px] tracking-[2px] rounded-sm"
+            ⚔️
+          </div>
+
+          {/* Right: 3 rows stacked, space-between */}
+          <div className="flex-1 min-w-0 flex flex-col justify-between" style={{ gap: '6px' }}>
+
+            {/* Row 1: Name */}
+            <h1
               style={{
-                background: 'rgba(120,60,200,0.2)',
-                border: '1px solid rgba(120,60,200,0.4)',
-                color: '#c090ff',
-                fontFamily: "'Noto Serif SC', serif",
+                fontFamily: "'Cinzel', serif",
+                color: '#f0c060',
+                fontSize: '18px',
+                letterSpacing: '2px',
+                lineHeight: 1.2,
+                wordBreak: 'break-word',
+                margin: 0,
               }}
             >
-              ⚡ 创始人
-            </span>
-          </div>
-        </div>
+              {character.name.toUpperCase()}
+            </h1>
 
-        {/* Overall level */}
-        <div className="ml-auto text-right flex-shrink-0">
-          <div className="text-[10px] tracking-widest uppercase mb-1" style={{ color: 'rgba(200,160,50,0.5)', fontFamily: "'Noto Serif SC', serif" }}>
-            总等级
-          </div>
-          <div className="font-cinzel text-4xl leading-none" style={{ color: '#f0c060' }}>
-            {overallLevel}
+            {/* Row 2: Class badge + Level */}
+            <div className="flex items-center justify-between">
+              <span
+                className="px-2 py-[2px] text-[11px] tracking-[1px] rounded-sm"
+                style={{
+                  background: 'rgba(120,60,200,0.2)',
+                  border: '1px solid rgba(120,60,200,0.4)',
+                  color: '#c090ff',
+                  fontFamily: "'Noto Serif SC', serif",
+                }}
+              >
+                ⚡ 创始人
+              </span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-[10px] tracking-widest"
+                  style={{ color: 'rgba(200,160,50,0.45)', fontFamily: "'Noto Serif SC', serif" }}>
+                  总等级
+                </span>
+                <span className="text-3xl leading-none"
+                  style={{ color: '#f0c060', fontFamily: "'Cinzel', serif" }}>
+                  {overallLevel}
+                </span>
+              </div>
+            </div>
+
+            {/* Row 3: XP bar */}
+            <div>
+              <div className="w-full h-[5px] rounded-full overflow-hidden"
+                style={{ background: 'rgba(200,160,50,0.12)', border: '1px solid rgba(200,160,50,0.2)' }}>
+                <div className="h-full rounded-full transition-all duration-700"
+                  style={{
+                    width: `${Math.min(100, Math.round(((overallXpInLevel ?? 0) / (overallXpNeeded ?? 500)) * 100))}%`,
+                    background: 'linear-gradient(90deg, #c8a030, #f0d060)',
+                    boxShadow: '0 0 6px rgba(240,200,60,0.5)',
+                  }} />
+              </div>
+              <div className="text-[10px] mt-[3px] text-right tabular-nums"
+                style={{ color: 'rgba(200,160,50,0.4)', fontFamily: "'Cinzel', serif" }}>
+                {overallXpInLevel ?? 0} / {overallXpNeeded ?? 500} XP
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -362,7 +406,7 @@ export default function Dashboard() {
         <div className="panel">
           <div className="panel-title">📊 角色属性</div>
           {(stats ?? []).map((s: any) => (
-            <XpBar key={s.stat_id} stat={s.stat_id} xp={s.xp} level={s.level} />
+            <StatValue key={s.stat_id} stat={s.stat_id} value={s.total_xp ?? 0} bonus={equipmentBonuses?.[s.stat_id] ?? 0} />
           ))}
         </div>
 
@@ -517,24 +561,10 @@ export default function Dashboard() {
       </div>
 
       {/* Footer */}
-      <div className="mt-8 flex flex-col items-center gap-4">
-        <div className="flex gap-3">
-          <Link href="/quests"
-            className="flex items-center gap-2 px-5 py-2 rounded-sm text-sm transition-all hover:opacity-80"
-            style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040', background: 'rgba(200,160,50,0.08)', border: '1px solid rgba(200,160,50,0.3)' }}>
-            📖 任务日志
-          </Link>
-          <Link href="/catalog"
-            className="flex items-center gap-2 px-5 py-2 rounded-sm text-sm transition-all hover:opacity-80"
-            style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040', background: 'rgba(200,160,50,0.08)', border: '1px solid rgba(200,160,50,0.3)' }}>
-            📚 任务目录
-          </Link>
-        </div>
-        <div
-          className="text-xs tracking-[3px]"
-          style={{ color: 'rgba(200,160,50,0.2)', fontFamily: "'Noto Serif SC', serif" }}
-        >
-          人生 RPG 系统 · 创始人版
+      <div className="mt-8 flex justify-center">
+        <div className="text-xs tracking-[3px]"
+          style={{ color: 'rgba(200,160,50,0.2)', fontFamily: "'Noto Serif SC', serif" }}>
+          RPG Life System
         </div>
       </div>
 

@@ -1,10 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ConvexClientProvider } from "../components/ConvexClientProvider";
+import BottomBar from "../components/BottomBar";
 
 export const metadata: Metadata = {
-  title: "人生 RPG 系统",
-  description: "将你的生活游戏化",
+  title: "RPG Life System",
+  description: "Gamify your life",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -19,7 +25,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ConvexClientProvider>
+          {/* Pad bottom so content isn't hidden under fixed nav bar (72px bar height) */}
+          <div style={{ paddingBottom: "66px" }}>
+            {children}
+          </div>
+          {/* Fixed bottom nav — anchored to visual viewport, always above Safari toolbar */}
+          <BottomBar />
+        </ConvexClientProvider>
       </body>
     </html>
   );
