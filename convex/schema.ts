@@ -34,6 +34,8 @@ export default defineSchema({
     is_boss: v.optional(v.boolean()),
     is_penalty: v.optional(v.boolean()),
     deadline: v.optional(v.string()),
+    current_value: v.optional(v.number()),
+    target_value: v.optional(v.number()),
   }),
   quest_catalog: defineTable({
     name: v.string(),

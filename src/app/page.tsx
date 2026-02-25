@@ -441,66 +441,164 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 首领战 — full width */}
+        {/* 副本 — full width */}
         <div className="md:col-span-2">
           {activeBoss ? (
-            <div
-              className="p-4 rounded-sm boss-active"
-              style={{ border: '1px solid rgba(200,40,40,0.5)', background: 'rgba(80,10,10,0.3)' }}
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-lg">⚠️</span>
-                <span
-                  className="text-xs tracking-widest uppercase"
-                  style={{ color: '#ff6060', fontFamily: "'Noto Serif SC', serif" }}
-                >
-                  首领战
-                </span>
+            <div style={{
+              border: '2px solid rgba(100,70,30,0.7)',
+              background: 'linear-gradient(180deg, rgba(8,4,18,0.95) 0%, rgba(20,10,5,0.9) 100%)',
+              borderRadius: '2px',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              {/* Stone texture scanlines */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.008) 3px, rgba(255,255,255,0.008) 4px)',
+                pointerEvents: 'none', zIndex: 0,
+              }} />
+
+              {/* Dungeon Header Bar */}
+              <div style={{
+                background: 'linear-gradient(90deg, rgba(60,20,8,0.9), rgba(35,12,4,0.7), rgba(60,20,8,0.9))',
+                borderBottom: '1px solid rgba(120,70,20,0.45)',
+                padding: '7px 12px',
+                display: 'flex', alignItems: 'center', gap: '8px',
+                position: 'relative', zIndex: 1,
+              }}>
+                <span style={{
+                  width: 7, height: 7, borderRadius: '50%',
+                  background: '#ff4040', boxShadow: '0 0 7px #ff4040',
+                  display: 'inline-block', flexShrink: 0,
+                }} />
+                <span style={{
+                  fontFamily: "'Noto Serif SC', serif", fontSize: '11px',
+                  letterSpacing: '2px', color: '#ff8060',
+                  textTransform: 'uppercase', fontWeight: 700,
+                }}>副本进行中</span>
+                <span style={{
+                  fontSize: '10px', color: 'rgba(200,160,100,0.5)',
+                  fontFamily: "'Cinzel', serif", letterSpacing: '1px',
+                }}>· 普通 · Solo</span>
                 {bossDeadline !== null && (
-                  <span
-                    className="ml-auto text-xs px-2 py-[2px] rounded-sm"
-                    style={{ color: '#ff8080', background: 'rgba(150,20,20,0.3)', fontFamily: "'Noto Serif SC', serif" }}
-                  >
-                    {bossDeadline} 天剩余
+                  <span style={{
+                    marginLeft: 'auto', fontSize: '11px',
+                    color: bossDeadline <= 7 ? '#ff6060' : 'rgba(200,160,80,0.75)',
+                    fontFamily: "'Noto Serif SC', serif",
+                    background: 'rgba(0,0,0,0.35)', padding: '2px 8px',
+                    borderRadius: '1px',
+                    border: `1px solid ${bossDeadline <= 7 ? 'rgba(200,50,50,0.4)' : 'rgba(100,70,20,0.3)'}`,
+                  }}>
+                    ⏱ {bossDeadline} 天剩余
                   </span>
                 )}
               </div>
-              <div className="text-sm mb-3" style={{ color: '#e8d5a3', fontFamily: "'Noto Serif SC', serif" }}>
-                {activeBoss.name}
-              </div>
-              <div
-                className="h-[6px] rounded-sm overflow-hidden"
-                style={{ background: 'rgba(255,255,255,0.05)' }}
-              >
-                <div
-                  className="h-full rounded-sm"
-                  style={{
-                    width: '33%',
-                    background: 'linear-gradient(90deg, #800000, #ff3030)',
-                    boxShadow: '0 0 8px rgba(255,50,50,0.5)',
-                  }}
-                />
-              </div>
-              <div className="text-[11px] mt-2" style={{ color: 'rgba(232,213,163,0.45)', fontFamily: "'Noto Serif SC', serif" }}>
-                奖励：<span style={{ color: '#f0c060', fontWeight: 700 }}>+{activeBoss.xp_reward} {STAT_META[activeBoss.stat]?.zh ?? activeBoss.stat} 经验</span>
+
+              {/* Boss Encounter Area */}
+              <div style={{ padding: '12px 14px', position: 'relative', zIndex: 1 }}>
+                {/* Boss portrait row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                  <div style={{
+                    width: 38, height: 38, borderRadius: '2px', flexShrink: 0,
+                    background: 'linear-gradient(135deg, rgba(60,10,10,0.9), rgba(20,5,5,0.95))',
+                    border: '1px solid rgba(150,50,20,0.5)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '20px',
+                  }}>💀</div>
+                  <div>
+                    <div style={{
+                      fontFamily: "'Cinzel', serif", fontSize: '13px',
+                      color: '#e8c880', fontWeight: 700, letterSpacing: '0.5px', lineHeight: 1.2,
+                    }}>{activeBoss.name}</div>
+                    <div style={{
+                      fontFamily: "'Noto Serif SC', serif", fontSize: '10px',
+                      color: 'rgba(200,130,60,0.5)', marginTop: '2px',
+                    }}>精英首领 · 必须击败</div>
+                  </div>
+                </div>
+
+                {/* Boss HP Bar (inverted — shows remaining HP) */}
+                {activeBoss.current_value != null && activeBoss.target_value != null ? (() => {
+                  const progressPct = Math.min(100, Math.round((activeBoss.current_value / activeBoss.target_value) * 100));
+                  const bossHpPct = Math.max(0, 100 - progressPct);
+                  const hpColor = bossHpPct > 50 ? '#20c050' : bossHpPct > 20 ? '#c8a020' : '#e03020';
+                  return (
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <span style={{ fontSize: '10px', color: 'rgba(200,160,80,0.5)', fontFamily: "'Noto Serif SC', serif" }}>Boss HP</span>
+                        <span style={{
+                          fontSize: '11px', fontFamily: "'Cinzel', serif", fontWeight: 700,
+                          color: bossHpPct <= 5 ? '#ff3030' : bossHpPct <= 20 ? '#e08020' : 'rgba(232,213,163,0.7)',
+                        }}>
+                          {bossHpPct === 0 ? '⚡ DEFEATED' : `${bossHpPct}%`}
+                        </span>
+                      </div>
+                      {/* HP track */}
+                      <div style={{
+                        height: '11px', background: 'rgba(0,0,0,0.55)',
+                        borderRadius: '1px', border: '1px solid rgba(80,40,10,0.5)',
+                        overflow: 'hidden', position: 'relative',
+                      }}>
+                        {/* WoW segment dividers */}
+                        <div style={{
+                          position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
+                          backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 23px, rgba(0,0,0,0.35) 23px, rgba(0,0,0,0.35) 24px)',
+                        }} />
+                        <div style={{
+                          height: '100%', width: `${bossHpPct}%`,
+                          background: `linear-gradient(90deg, ${hpColor}90, ${hpColor})`,
+                          boxShadow: `0 0 8px ${hpColor}70`,
+                          transition: 'width 0.8s ease, background 0.5s ease',
+                          borderRadius: '1px',
+                        }} />
+                      </div>
+                      {/* Numbers */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px' }}>
+                        <span style={{ fontSize: '11px', color: 'rgba(232,213,163,0.5)', fontFamily: "'Cinzel', serif" }}>
+                          ${activeBoss.current_value.toLocaleString()}
+                          <span style={{ color: 'rgba(200,160,80,0.3)' }}> / ${activeBoss.target_value.toLocaleString()}</span>
+                        </span>
+                        <span style={{ fontSize: '11px', color: 'rgba(232,213,163,0.4)', fontFamily: "'Noto Serif SC', serif" }}>
+                          差 <span style={{ color: '#f0a060', fontWeight: 700 }}>${(activeBoss.target_value - activeBoss.current_value).toLocaleString()}</span> 击杀
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })() : (
+                  <div style={{ height: '11px', background: 'rgba(0,0,0,0.4)', borderRadius: '1px', border: '1px solid rgba(80,40,10,0.3)' }}>
+                    <div style={{ height: '100%', width: '0%', background: '#20c050', borderRadius: '1px' }} />
+                  </div>
+                )}
+
+                {/* Reward strip */}
+                <div style={{
+                  marginTop: '10px', paddingTop: '8px',
+                  borderTop: '1px solid rgba(100,70,20,0.2)',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                }}>
+                  <span style={{ fontSize: '13px' }}>🏆</span>
+                  <span style={{ fontSize: '11px', color: 'rgba(232,213,163,0.4)', fontFamily: "'Noto Serif SC', serif" }}>通关奖励：</span>
+                  <span style={{ fontSize: '11px', color: '#f0c060', fontWeight: 700, fontFamily: "'Cinzel', serif" }}>
+                    +{activeBoss.xp_reward} {STAT_META[activeBoss.stat]?.zh ?? activeBoss.stat} XP
+                  </span>
+                </div>
               </div>
             </div>
           ) : (
-            <div
-              className="p-4 rounded-sm"
-              style={{ border: '1px solid rgba(200,40,40,0.15)', background: 'rgba(40,5,5,0.2)' }}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <span>⚠️</span>
-                <span
-                  className="text-xs tracking-widest uppercase"
-                  style={{ color: 'rgba(180,60,60,0.5)', fontFamily: "'Noto Serif SC', serif" }}
-                >
-                  首领战
-                </span>
+            <div style={{
+              border: '1px solid rgba(80,50,20,0.25)',
+              background: 'rgba(10,5,20,0.3)',
+              borderRadius: '2px', padding: '14px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <span style={{ fontSize: '16px', opacity: 0.35 }}>⚔️</span>
+                <span style={{
+                  fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase',
+                  color: 'rgba(150,100,50,0.4)', fontFamily: "'Noto Serif SC', serif",
+                }}>副本</span>
               </div>
-              <div className="text-xs" style={{ color: 'rgba(232,213,163,0.3)', fontFamily: "'Noto Serif SC', serif" }}>
-                暂无首领战。设定大目标来触发。
+              <div style={{ fontSize: '12px', color: 'rgba(232,213,163,0.25)', fontFamily: "'Noto Serif SC', serif" }}>
+                暂无进行中的副本。设定大目标来触发副本。
               </div>
             </div>
           )}

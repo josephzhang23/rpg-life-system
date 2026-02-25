@@ -581,3 +581,50 @@ export const deleteAbility = mutation({
     return { ok: true };
   },
 });
+
+export const upsertBossFight = mutation({
+  args: {
+    name: v.string(),
+    stat: v.string(),
+    xp_reward: v.number(),
+    deadline: v.string(),
+    objective: v.optional(v.string()),
+    description: v.optional(v.string()),
+    current_value: v.optional(v.number()),
+    target_value: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const bosses = (await ctx.db.query("quests").collect()).filter(
+      (q: any) => q.is_boss && !q.completed
+    );
+    for (const b of bosses) {
+      await ctx.db.patch(b._id, { completed: true });
+    }
+    await ctx.db.insert("quests", {
+      name: args.name,
+      stat: args.stat,
+      xp_reward: args.xp_reward,
+      deadline: args.deadline,
+      objective: args.objective,
+      description: args.description,
+      current_value: args.current_value,
+      target_value: args.target_value,
+      is_boss: true,
+      completed: false,
+      date: todayISO(),
+    } as any);
+    return { ok: true };
+  },
+});
+
+export const updateBossProgress = mutation({
+  args: { current_value: v.number() },
+  handler: async (ctx, args) => {
+    const boss = (await ctx.db.query("quests").collect()).find(
+      (q: any) => q.is_boss && !q.completed
+    );
+    if (!boss) throw new Error("No active boss fight");
+    await ctx.db.patch(boss._id, { current_value: args.current_value });
+    return { ok: true };
+  },
+});
