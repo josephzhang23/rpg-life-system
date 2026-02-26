@@ -522,8 +522,11 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── Main Grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* ── Main Layout: left column + right column on desktop ── */}
+      <div className="flex flex-col md:flex-row gap-4 items-start">
+
+      {/* ── LEFT COLUMN ── */}
+      <div className="flex flex-col gap-4 w-full md:w-[400px] flex-shrink-0">
 
         {/* 角色属性 */}
         <div className="panel">
@@ -564,8 +567,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 副本 — full width */}
-        <div className="md:col-span-2">
+        {/* 副本 */}
+        <div>
           {activeBoss ? (
             <div style={{
               border: '2px solid rgba(100,70,30,0.7)',
@@ -727,6 +730,36 @@ export default function Dashboard() {
           )}
         </div>
 
+        {/* 成就 — left column */}
+        <div className="rounded-sm overflow-hidden"
+          style={{ border: '1px solid rgba(200,160,50,0.3)', background: '#0e0a05' }}
+        >
+          <div
+            className="flex items-center justify-between px-4 py-3"
+            style={{
+              background: 'linear-gradient(90deg, rgba(60,40,5,0.9), rgba(40,28,4,0.9))',
+              borderBottom: '1px solid rgba(200,160,50,0.25)',
+            }}
+          >
+            <span style={{ fontFamily: "'Noto Serif SC', serif", color: '#f0c060', fontSize: '11px', letterSpacing: '3px', fontWeight: 700 }}>
+              🏆 成就
+            </span>
+            <span style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,160,50,0.5)', fontSize: '11px' }}>
+              {(achievements ?? []).filter((a: any) => a.unlocked).length} / {(achievements ?? []).length} 已解锁
+            </span>
+          </div>
+          <div className="flex flex-col">
+            {(achievements ?? []).map((a: any) => (
+              <AchievementRow key={a._id} achievement={a} />
+            ))}
+          </div>
+        </div>
+
+      </div>{/* end LEFT COLUMN */}
+
+      {/* ── RIGHT COLUMN — quest log ── */}
+      <div className="flex-1 w-full min-w-0">
+
         {/* 任务日志 — WoW Quest Log style */}
         <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
           {/* Panel title bar */}
@@ -827,34 +860,9 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 成就 — full width */}
-        <div className="md:col-span-2 rounded-sm overflow-hidden"
-          style={{ border: '1px solid rgba(200,160,50,0.3)', background: '#0e0a05' }}
-        >
-          {/* Header */}
-          <div
-            className="flex items-center justify-between px-4 py-3"
-            style={{
-              background: 'linear-gradient(90deg, rgba(60,40,5,0.9), rgba(40,28,4,0.9))',
-              borderBottom: '1px solid rgba(200,160,50,0.25)',
-            }}
-          >
-            <span style={{ fontFamily: "'Noto Serif SC', serif", color: '#f0c060', fontSize: '11px', letterSpacing: '3px', fontWeight: 700 }}>
-              🏆 成就
-            </span>
-            <span style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,160,50,0.5)', fontSize: '11px' }}>
-              {(achievements ?? []).filter((a: any) => a.unlocked).length} / {(achievements ?? []).length} 已解锁
-            </span>
-          </div>
-          {/* Rows */}
-          <div className="flex flex-col">
-            {(achievements ?? []).map((a: any) => (
-              <AchievementRow key={a._id} achievement={a} />
-            ))}
-          </div>
-        </div>
+      </div>{/* end RIGHT COLUMN */}
 
-      </div>
+      </div>{/* end MAIN LAYOUT */}
 
       {/* Footer */}
       <div className="mt-8 flex justify-center">
