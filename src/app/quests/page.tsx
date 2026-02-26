@@ -264,9 +264,19 @@ export default function QuestLog() {
     );
   }
 
-  const groups = groupQuests(quests);
-  const total = quests.filter((q: any) => !q.is_boss).length;
-  const completed = quests.filter((q: any) => q.completed && !q.is_boss).length;
+  // Inject uncompleted daily templates as virtual quest rows for today
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+  const completedNamesSet = new Set(
+    (quests ?? []).filter((q: any) => q.date === today).map((q: any) => q.name)
+  );
+  const virtualTemplates = DAILY_QUEST_TEMPLATES
+    .filter(t => !completedNamesSet.has(t.name))
+    .map(t => ({ ...t, completed: false, date: today, is_boss: false, is_penalty: false, _virtual: true }));
+  const allQuests = [...(quests ?? []), ...virtualTemplates];
+
+  const groups = groupQuests(allQuests);
+  const total = allQuests.filter((q: any) => !q.is_boss).length;
+  const completed = allQuests.filter((q: any) => q.completed && !q.is_boss).length;
 
   const handleSelect = (q: any) => {
     setSelected(enrichQuest(q));
@@ -330,9 +340,10 @@ export default function QuestLog() {
               </div>
               {groupQuests.map((q: any) => {
                 const meta = STAT_META[q.stat] ?? STAT_META["INT"];
-                const isSelected = selected?._id === q._id;
+                const isSelected = selected?.name === q.name;
+                const rowKey = q._id ?? `tmpl_${q.name}`;
                 return (
-                  <div key={q._id} onClick={() => handleSelect(q)}
+                  <div key={rowKey} onClick={() => handleSelect(q)}
                     className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-all"
                     style={{
                       background: isSelected ? 'rgba(200,160,50,0.12)' : 'transparent',
