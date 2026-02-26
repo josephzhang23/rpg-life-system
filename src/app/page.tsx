@@ -284,7 +284,7 @@ export default function Dashboard() {
   const { character, stats, streaks, questsToday, activeBoss, achievements, overallLevel, overallTotalXp, overallXpInLevel, overallXpNeeded, equipmentBonuses, today } = data;
   const streakMap = Object.fromEntries((streaks ?? []).map((s: any) => [s.type, s.count]));
 
-  const todayFormatted = new Date(today + "T00:00:00").toLocaleDateString("zh-CN", {
+  const todayFormatted = new Date(today + "T00:00:00").toLocaleDateString("zh-CN", { timeZone: 'Asia/Shanghai',
     weekday: "short", month: "long", day: "numeric"
   });
 

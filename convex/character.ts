@@ -12,7 +12,7 @@ const STAT_NAMES: Record<string, string> = {
 const DEFAULT_STATS = ["INT", "DISC", "STR", "SOC", "CRE"] as const;
 
 function todayISO() {
-  return new Date().toISOString().slice(0, 10);
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
 }
 
 function nowISO() {
