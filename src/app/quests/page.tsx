@@ -102,25 +102,10 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
           </p>
         )}
 
-        {/* ── Why it matters (description) ── */}
-        {quest.description && (
-          <>
-            <div className="mb-4">
-              <div className="text-[11px] tracking-[3px] mb-2 font-bold uppercase"
-                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>描述</div>
-              <p className="text-sm leading-relaxed"
-                style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
-                {quest.description}
-              </p>
-            </div>
-            <div className="wow-divider" />
-          </>
-        )}
-
         {/* ── Action Steps ── */}
         {quest.steps && quest.steps.length > 0 && (
           <>
-            <div className="mt-4 mb-4">
+            <div className="mt-2 mb-4">
               <ol style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {quest.steps.map((step: string, i: number) => (
                   <li key={i} className="flex gap-3 mb-2">
@@ -141,32 +126,42 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
 
         {/* ── Proof Requirement ── */}
         {quest.proof_requirement && (
-          <>
-            <div className="mt-4 mb-4">
-              <div className="flex gap-2 items-start px-3 py-2 rounded-sm"
-                style={{ background: 'rgba(200,160,50,0.06)', border: '1px solid rgba(200,160,50,0.15)' }}>
-                <span style={{ fontSize: '14px', flexShrink: 0 }}>📜</span>
-                <p className="text-sm" style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.8)', lineHeight: '1.75' }}>
-                  {quest.proof_requirement}
-                </p>
-              </div>
+          <div className="mt-4 mb-2">
+            <div className="flex gap-2 items-start px-3 py-2 rounded-sm"
+              style={{ background: 'rgba(200,160,50,0.06)', border: '1px solid rgba(200,160,50,0.15)' }}>
+              <span style={{ fontSize: '14px', flexShrink: 0 }}>📜</span>
+              <p className="text-sm" style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.8)', lineHeight: '1.75' }}>
+                {quest.proof_requirement}
+              </p>
             </div>
-          </>
+          </div>
         )}
 
         {/* ── Submitted Proof (note) ── */}
         {quest.note && (
-          <>
-            <div className="mb-4">
-              <div className="flex gap-2 items-start px-3 py-2 rounded-sm"
-                style={{ background: 'rgba(64,192,96,0.06)', border: '1px solid rgba(64,192,96,0.2)' }}>
-                <span style={{ fontSize: '14px', flexShrink: 0 }}>✓</span>
-                <p className="text-sm" style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(180,230,180,0.8)', lineHeight: '1.75' }}>
-                  {quest.note}
-                </p>
-              </div>
+          <div className="mt-2 mb-4">
+            <div className="flex gap-2 items-start px-3 py-2 rounded-sm"
+              style={{ background: 'rgba(64,192,96,0.06)', border: '1px solid rgba(64,192,96,0.2)' }}>
+              <span style={{ fontSize: '14px', flexShrink: 0 }}>✓</span>
+              <p className="text-sm" style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(180,230,180,0.8)', lineHeight: '1.75' }}>
+                {quest.note}
+              </p>
             </div>
+          </div>
+        )}
+
+        {/* ── Description (last sub-section) ── */}
+        {quest.description && (
+          <>
             <div className="wow-divider" />
+            <div className="mt-4 mb-4">
+              <div className="text-[11px] tracking-[3px] mb-2 font-bold uppercase"
+                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>描述</div>
+              <p className="text-sm leading-relaxed"
+                style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
+                {quest.description}
+              </p>
+            </div>
           </>
         )}
 
