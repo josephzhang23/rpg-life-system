@@ -224,6 +224,19 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
   );
 }
 
+// Merge DB record with template to ensure steps/proof_requirement always present
+function enrichQuest(q: any) {
+  const tmpl = DAILY_QUEST_TEMPLATES.find(t => t.name === q.name);
+  if (!tmpl) return q;
+  return {
+    steps: tmpl.steps,
+    proof_requirement: tmpl.proof_requirement,
+    description: tmpl.description,
+    objective: tmpl.objective,
+    ...q, // DB fields take precedence (note, completed, date, etc.)
+  };
+}
+
 export default function QuestLog() {
   const quests = useQuery(api.character.getAllQuests);
   const [selected, setSelected] = useState<any>(null);
@@ -240,7 +253,7 @@ export default function QuestLog() {
     // Try DB first
     const found = quests.find((q: any) => q.name === decoded);
     if (found) {
-      setSelected(found);
+      setSelected(enrichQuest(found));
       setShowDetail(true);
       setAutoSelected(true);
       return;
@@ -269,7 +282,7 @@ export default function QuestLog() {
   const completed = quests.filter((q: any) => q.completed && !q.is_boss).length;
 
   const handleSelect = (q: any) => {
-    setSelected(q);
+    setSelected(enrichQuest(q));
     setShowDetail(true);
   };
 
