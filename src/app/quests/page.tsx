@@ -137,17 +137,30 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
         )}
 
         {/* ── Submitted Proof (note) ── */}
-        {quest.note && (
-          <div className="mt-2 mb-4">
-            <div className="flex gap-2 items-start px-3 py-2 rounded-sm"
-              style={{ background: 'rgba(64,192,96,0.06)', border: '1px solid rgba(64,192,96,0.2)' }}>
-              <span style={{ fontSize: '14px', flexShrink: 0 }}>✓</span>
-              <p className="text-sm" style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(180,230,180,0.8)', lineHeight: '1.75' }}>
-                {quest.note}
-              </p>
+        {quest.note && (() => {
+          const proofMatch = quest.note.match(/\[proof:([^\]]+)\]/);
+          const imgSrc = proofMatch?.[1];
+          const text = quest.note.replace(/\[proof:[^\]]+\]/, '').trim();
+          return (
+            <div className="mt-2 mb-4">
+              <div className="flex flex-col gap-2 px-3 py-2 rounded-sm"
+                style={{ background: 'rgba(64,192,96,0.06)', border: '1px solid rgba(64,192,96,0.2)' }}>
+                {text && (
+                  <div className="flex gap-2 items-start">
+                    <span style={{ fontSize: '14px', flexShrink: 0 }}>✓</span>
+                    <p className="text-sm" style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(180,230,180,0.8)', lineHeight: '1.75', whiteSpace: 'pre-line' }}>
+                      {text}
+                    </p>
+                  </div>
+                )}
+                {imgSrc && (
+                  <img src={imgSrc} alt="proof" className="rounded-sm mt-1"
+                    style={{ maxWidth: '100%', maxHeight: '320px', objectFit: 'contain', border: '1px solid rgba(64,192,96,0.2)' }} />
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* ── Description (last sub-section) ── */}
         {quest.description && (
