@@ -681,7 +681,7 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {/* ── Section: 其他任务 (ad-hoc) ── */}
+            {/* ── Section: 支线任务 (ad-hoc) ── */}
             {(() => {
               const adHoc = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name));
               if (adHoc.length === 0) return null;
@@ -699,7 +699,7 @@ export default function Dashboard() {
                     <span style={{
                       fontFamily: "'Cinzel', serif", fontSize: '12px',
                       color: '#d4922a', fontWeight: 700, letterSpacing: '0.5px', flex: 1,
-                    }}>其他任务</span>
+                    }}>支线任务</span>
                     <span style={{
                       fontFamily: "'Cinzel', serif", fontSize: '10px',
                       color: 'rgba(200,160,50,0.45)',
