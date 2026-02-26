@@ -504,6 +504,16 @@ export const deleteCatalogEntry = mutation({
 // ── Quest Description / Lore ───────────────────────────────
 
 
+export const patchQuestXp = mutation({
+  args: { questId: v.string(), xp_reward: v.number() },
+  handler: async (ctx, args) => {
+    const quest = await ctx.db.get(args.questId as any);
+    if (!quest) throw new Error("Quest not found");
+    await ctx.db.patch(quest._id, { xp_reward: args.xp_reward });
+    return { ok: true };
+  },
+});
+
 export const updateQuestDescription = mutation({
   args: { questId: v.string(), objective: v.optional(v.string()), description: v.optional(v.string()), lore: v.optional(v.string()) },
   handler: async (ctx, args) => {
