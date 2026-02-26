@@ -14,10 +14,13 @@ const STAT_META: Record<string, { zh: string; color: string; bg: string }> = {
 };
 
 function groupQuests(quests: any[]) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
   const groups: Record<string, any[]> = {};
 
   for (const q of quests) {
+    // Skip past uncompleted non-boss quests — they're expired dailies
+    if (!q.is_boss && q.date !== today && !q.completed) continue;
+
     const key = q.is_boss ? "⚔️ 副本" : q.date === today ? "📋 今日任务" : `📅 ${q.date}`;
     if (!groups[key]) groups[key] = [];
     groups[key].push(q);
