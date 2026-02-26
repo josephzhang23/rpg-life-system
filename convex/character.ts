@@ -551,12 +551,15 @@ export const addQuestToday = mutation({
     xp_reward: v.number(),
     objective: v.optional(v.string()),
     description: v.optional(v.string()),
+    steps: v.optional(v.array(v.string())),
+    proof_requirement: v.optional(v.string()),
     is_penalty: v.optional(v.boolean()),
+    date: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const today = todayISO();
+    const date = args.date ?? todayISO();
     const existing = (await ctx.db.query("quests").collect()).find(
-      (q: any) => q.date === today && q.name === args.name
+      (q: any) => q.name === args.name && !q.is_boss
     );
     if (existing) return { ok: true, reason: "already_exists" };
     await ctx.db.insert("quests", {
@@ -565,8 +568,10 @@ export const addQuestToday = mutation({
       xp_reward: args.xp_reward,
       objective: args.objective,
       description: args.description,
+      steps: args.steps ?? [],
+      proof_requirement: args.proof_requirement ?? "",
       completed: false,
-      date: today,
+      date,
       is_boss: false,
       is_penalty: args.is_penalty ?? false,
     } as any);
