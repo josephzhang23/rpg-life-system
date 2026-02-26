@@ -471,6 +471,25 @@ export const logCompletedQuest = mutation({
 
     const xpAmount = (args.is_penalty ?? false) ? -Math.abs(args.xp_reward) : args.xp_reward;
     const xpResult = await applyXpToStat(ctx, args.stat, xpAmount);
+
+    // Auto-update specific streaks based on quest name
+    const qname = args.name.toLowerCase();
+    const streakMap: Record<string, string> = {
+      reading: "reading",
+      "read ": "reading",
+      gym: "gym",
+      workout: "gym",
+      "deep work": "deep_work",
+    };
+    const streaks = await ctx.db.query("streaks").collect();
+    for (const [keyword, streakType] of Object.entries(streakMap)) {
+      if (qname.includes(keyword)) {
+        const s = streaks.find((x: any) => x.type === streakType);
+        if (s) await ctx.db.patch(s._id, { count: s.count + 1, last_updated: todayISO() });
+        break;
+      }
+    }
+
     return { ok: true, xpResult };
   },
 });
