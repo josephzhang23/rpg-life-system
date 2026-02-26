@@ -339,7 +339,7 @@ const DAILY_QUEST_TEMPLATES = [
       "按影响力从高到低排序",
       "把第一项安排进今天的时间块",
     ],
-    proof_requirement: "写出今天的三件事（可直接发给 GM）",
+    proof_requirement: "写出今天最重要的三件事",
   },
   {
     name: "60 minutes deep work sprint", stat: "INT", xp_reward: 35,
