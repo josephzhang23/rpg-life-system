@@ -28,9 +28,11 @@ export default defineSchema({
     xp_reward: v.number(),
     completed: v.boolean(),
     date: v.string(),
-    objective: v.optional(v.string()),    // short text under title
-    description: v.optional(v.string()),  // longer flavor text in Description section
-    note: v.optional(v.string()),         // completion note: what was actually done
+    objective: v.optional(v.string()),          // short goal statement
+    description: v.optional(v.string()),        // why it matters (lore/meaning)
+    steps: v.optional(v.array(v.string())),     // actionable step-by-step instructions
+    proof_requirement: v.optional(v.string()),  // what counts as proof of completion
+    note: v.optional(v.string()),               // completion record: what actually happened / proof submitted
     is_boss: v.optional(v.boolean()),
     is_penalty: v.optional(v.boolean()),
     deadline: v.optional(v.string()),
