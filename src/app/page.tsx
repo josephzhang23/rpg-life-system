@@ -650,9 +650,9 @@ export default function Dashboard() {
             <div style={{
               display: 'flex', alignItems: 'center', gap: '6px',
               padding: '4px 14px 4px 10px',
-              background: 'rgba(200,140,30,0.07)',
-              borderTop: '1px solid rgba(200,140,30,0.15)',
-              borderBottom: '1px solid rgba(200,140,30,0.15)',
+
+
+
               marginBottom: '2px',
             }}>
               <span style={{ fontSize: '10px', color: '#c87830', fontWeight: 700, lineHeight: 1 }}>⊟</span>
@@ -690,9 +690,9 @@ export default function Dashboard() {
                   <div style={{
                     display: 'flex', alignItems: 'center', gap: '6px',
                     padding: '4px 14px 4px 10px',
-                    background: 'rgba(200,140,30,0.07)',
-                    borderTop: '1px solid rgba(200,140,30,0.15)',
-                    borderBottom: '1px solid rgba(200,140,30,0.15)',
+      
+      
+      
                     marginBottom: '2px',
                   }}>
                     <span style={{ fontSize: '10px', color: '#c87830', fontWeight: 700, lineHeight: 1 }}>⊟</span>
