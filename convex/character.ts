@@ -148,6 +148,9 @@ export const getDashboard = query({
     const today = todayISO();
     // Only return completed quests — DB is a ledger of victories, not a to-do list
     const questsToday = quests.filter((q: any) => q.date === today && !q.is_boss && q.completed);
+    // Manually added goal quests (not daily templates, not boss, not yet completed)
+    const TEMPLATE_NAMES = ["Plan your top 3 priorities","60 minutes deep work sprint","Workout / movement session","Meaningful outreach or connection","Create something publishable","Push a commit"];
+    const pendingGoals = quests.filter((q: any) => !q.is_boss && !q.completed && !TEMPLATE_NAMES.includes(q.name));
     const activeBoss = quests.find((q: any) => q.is_boss && !q.completed) ?? null;
     const totalXp = stats.reduce((sum: number, s: any) => sum + (s.total_xp ?? 0), 0);
     const { level: overallLevel, xpInLevel: overallXpInLevel, xpNeeded: overallXpNeeded } = levelFromTotalXp(totalXp);
@@ -165,6 +168,7 @@ export const getDashboard = query({
       stats: stats.sort((a: any, b: any) => DEFAULT_STATS.indexOf(a.stat_id as any) - DEFAULT_STATS.indexOf(b.stat_id as any)),
       streaks,
       questsToday,
+      pendingGoals,
       activeBoss,
       achievements,
       overallLevel,

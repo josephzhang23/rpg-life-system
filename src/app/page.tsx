@@ -327,7 +327,7 @@ export default function Dashboard() {
     );
   }
 
-  const { character, stats, streaks, questsToday, activeBoss, achievements, overallLevel, overallTotalXp, overallXpInLevel, overallXpNeeded, equipmentBonuses, today } = data;
+  const { character, stats, streaks, questsToday, pendingGoals, activeBoss, achievements, overallLevel, overallTotalXp, overallXpInLevel, overallXpNeeded, equipmentBonuses, today } = data;
   const streakMap = Object.fromEntries((streaks ?? []).map((s: any) => [s.type, s.count]));
 
   const todayFormatted = new Date(today + "T00:00:00").toLocaleDateString("zh-CN", { timeZone: 'Asia/Shanghai',
@@ -341,8 +341,9 @@ export default function Dashboard() {
   const dailyTemplates = DAILY_QUEST_TEMPLATES;
   const templateNames  = new Set(DAILY_QUEST_TEMPLATES.map(t => t.name));
   const adHocCompleted = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name));
+  const pendingGoalsList = pendingGoals ?? [];
   const completedCount = dailyTemplates.filter((q: any) => completedNames.has(q.name)).length + adHocCompleted.length;
-  const totalCount     = dailyTemplates.length + adHocCompleted.length;
+  const totalCount     = dailyTemplates.length + adHocCompleted.length + pendingGoalsList.length;
 
   return (
     <div className="max-w-[960px] mx-auto px-4 py-6 relative">
@@ -706,10 +707,11 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {/* ── Section: 支线任务 (ad-hoc) ── */}
+            {/* ── Section: 支线任务 (ad-hoc completed + pending goals) ── */}
             {(() => {
               const adHoc = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name));
-              if (adHoc.length === 0) return null;
+              const pending = pendingGoals ?? [];
+              if (adHoc.length === 0 && pending.length === 0) return null;
               return (
                 <>
                   <div style={{
@@ -730,11 +732,14 @@ export default function Dashboard() {
                       color: 'rgba(200,160,50,0.45)',
                       background: 'rgba(200,140,30,0.1)',
                       padding: '1px 6px', borderRadius: '1px',
-                    }}>{adHoc.length}/{adHoc.length}</span>
+                    }}>{adHoc.length}/{adHoc.length + pending.length}</span>
                   </div>
                   <div style={{ padding: '0 0 6px 0' }}>
                     {adHoc.map((q: any) => (
                       <QuestRow key={q._id} quest={q} completed={true} onComplete={() => {}} indent />
+                    ))}
+                    {pending.map((q: any) => (
+                      <QuestRow key={q._id} quest={q} completed={false} onComplete={() => {}} indent />
                     ))}
                   </div>
                 </>
