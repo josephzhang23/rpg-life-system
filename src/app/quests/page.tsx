@@ -153,7 +153,6 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
         {/* ── Description (last sub-section) ── */}
         {quest.description && (
           <>
-            <div className="wow-divider" />
             <div className="mt-4 mb-4">
               <div className="text-[11px] tracking-[3px] mb-2 font-bold uppercase"
                 style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>描述</div>
