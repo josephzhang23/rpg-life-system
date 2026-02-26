@@ -18,15 +18,15 @@ function groupQuests(quests: any[]) {
   const groups: Record<string, any[]> = {};
 
   for (const q of quests) {
-    const key = q.is_boss ? "⚠️ 首领战" : q.date === today ? "📋 今日任务" : `📅 ${q.date}`;
+    const key = q.is_boss ? "⚔️ 副本" : q.date === today ? "📋 今日任务" : `📅 ${q.date}`;
     if (!groups[key]) groups[key] = [];
     groups[key].push(q);
   }
 
   // Sort group keys: boss first, today second, then dates descending
   const sorted = Object.entries(groups).sort(([a], [b]) => {
-    if (a.includes("首领战")) return -1;
-    if (b.includes("首领战")) return 1;
+    if (a.includes("副本")) return -1;
+    if (b.includes("副本")) return 1;
     if (a.includes("今日")) return -1;
     if (b.includes("今日")) return 1;
     return b.localeCompare(a);
@@ -79,7 +79,7 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
 
         {/* Date / type */}
         <div className="text-[11px] mb-4" style={{ color: 'rgba(200,160,50,0.4)', fontFamily: "'Noto Serif SC', serif" }}>
-          {quest.is_boss ? '⚠️ 首领战' : quest.is_penalty ? '💀 惩罚任务' : `📅 ${quest.date}`}
+          {quest.is_boss ? '⚔️ 副本' : quest.is_penalty ? '💀 惩罚任务' : `📅 ${quest.date}`}
           {quest.deadline && ` · 截止 ${quest.deadline.slice(0, 10)}`}
         </div>
 
