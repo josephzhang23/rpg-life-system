@@ -120,7 +120,6 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
                 ))}
               </ol>
             </div>
-            <div className="wow-divider" />
           </>
         )}
 
