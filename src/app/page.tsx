@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 
 /* ── Stat metadata with Chinese names ── */
@@ -257,6 +257,53 @@ export default function Dashboard() {
   const [seeding, setSeeding]       = useState(false);
   const [levelUpMsg, setLevelUpMsg] = useState<string | null>(null);
 
+  // ── Floating Combat Text ──
+  interface FloatItem { id: number; xp: number; zh: string; color: string; x: number; y: number }
+  const [floats, setFloats] = useState<FloatItem[]>([]);
+  const floatIdRef = useRef(0);
+  const prevXpRef  = useRef<Record<string, number> | null>(null);
+
+  useEffect(() => {
+    const statArr: any[] = data?.stats ?? [];
+    if (statArr.length === 0) return;
+
+    const current: Record<string, number> = {};
+    for (const s of statArr) current[s.stat_id] = s.total_xp ?? 0;
+
+    if (prevXpRef.current === null) {
+      prevXpRef.current = current; // first render — snapshot only
+      return;
+    }
+
+    const spawned: FloatItem[] = [];
+    for (const key of Object.keys(current)) {
+      const prev = prevXpRef.current[key] ?? 0;
+      const curr = current[key];
+      if (curr > prev) {
+        const meta = STAT_META[key];
+        if (!meta) continue;
+        spawned.push({
+          id: ++floatIdRef.current,
+          xp: curr - prev,
+          zh: meta.zh,
+          color: meta.color,
+          // position: stats panel is roughly top-left on mobile
+          x: 15 + Math.random() * 45,   // 15–60 vw%
+          y: 18 + Math.random() * 22,   // 18–40 vh% (where stat bars live)
+        });
+      }
+    }
+
+    if (spawned.length > 0) {
+      setFloats(f => [...f, ...spawned]);
+      for (const item of spawned) {
+        setTimeout(() => setFloats(f => f.filter(fi => fi.id !== item.id)), 2700);
+      }
+    }
+    prevXpRef.current = current;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.stats]);
+
   // Set of quest names completed today (for template status overlay)
   const completedNames = new Set((data?.questsToday ?? []).map((q: any) => q.name));
 
@@ -347,6 +394,32 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-[960px] mx-auto px-4 py-6 relative">
+
+      {/* ── WoW Floating Combat Text overlay ── */}
+      {floats.length > 0 && (
+        <div className="fixed inset-0 pointer-events-none z-[300]" aria-hidden>
+          {floats.map(f => (
+            <div
+              key={f.id}
+              className="wow-fct"
+              style={{
+                position: 'absolute',
+                left:  `${f.x}%`,
+                top:   `${f.y}%`,
+                color: f.color,
+                textShadow: `0 0 10px ${f.color}cc, 0 0 24px ${f.color}55, 0 2px 6px rgba(0,0,0,0.95)`,
+              }}
+            >
+              <div style={{ fontFamily: "'Cinzel', serif", fontSize: '26px', fontWeight: 900, lineHeight: 1, letterSpacing: '-0.5px' }}>
+                +{f.xp}
+              </div>
+              <div style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '12px', fontWeight: 700, opacity: 0.9, textAlign: 'center', marginTop: '3px', letterSpacing: '2px' }}>
+                {f.zh}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Level Up Toast */}
       {levelUpMsg && (

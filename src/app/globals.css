@@ -159,3 +159,19 @@ body {
   50%       { box-shadow: 0 0 18px rgba(200,30,30,0.6); }
 }
 .boss-active { animation: bossGlow 2.5s ease-in-out infinite; }
+
+/* ── WoW Floating Combat Text ── */
+@keyframes wowFCT {
+  0%   { opacity: 0;   transform: translateY(0)    scale(1.35); }
+  8%   { opacity: 1;   transform: translateY(-10px) scale(1.15); }
+  28%  { opacity: 1;   transform: translateY(-30px) scale(1);    }
+  68%  { opacity: 0.9; transform: translateY(-68px) scale(1);    }
+  100% { opacity: 0;   transform: translateY(-96px) scale(0.85); }
+}
+.wow-fct {
+  animation: wowFCT 2.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  pointer-events: none;
+  white-space: nowrap;
+  transform-origin: center bottom;
+  user-select: none;
+}
