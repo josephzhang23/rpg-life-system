@@ -86,17 +86,22 @@ function StatValue({ stat, value, bonus = 0 }: { stat: string; value: number; bo
 }
 
 /* ── Quest row (template-based) ── */
-function QuestRow({ quest, completed, onComplete }: {
+function QuestRow({ quest, completed, onComplete, indent }: {
   quest: any;
   completed: boolean;
   onComplete: (quest: any) => void;
+  indent?: boolean;
 }) {
   const meta = STAT_META[quest.stat] ?? STAT_META["INT"];
   const isPenalty = quest.is_penalty ?? false;
   return (
     <div
-      className="flex items-center gap-3 py-[10px] border-b last:border-0"
-      style={{ borderColor: isPenalty ? 'rgba(255,60,60,0.08)' : 'rgba(200,160,50,0.08)' }}
+      className="flex items-center gap-3 py-[9px] border-b last:border-0"
+      style={{
+        borderColor: isPenalty ? 'rgba(255,60,60,0.08)' : 'rgba(200,160,50,0.06)',
+        paddingLeft: indent ? '24px' : '14px',
+        paddingRight: '14px',
+      }}
     >
       <button
         onClick={() => !completed && onComplete(quest)}
@@ -623,42 +628,94 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* 每日任务 */}
-        <div className="panel">
-          <div className="flex items-center gap-3 mb-4">
-            <span
-              className="text-[11px] tracking-[2px] uppercase whitespace-nowrap"
-              style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040', fontWeight: 700 }}
-            >
-              📋 每日任务
+        {/* 任务日志 — WoW Quest Log style */}
+        <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+          {/* Panel title bar */}
+          <div style={{
+            background: 'linear-gradient(90deg, rgba(40,28,8,0.95), rgba(25,16,4,0.9), rgba(40,28,8,0.95))',
+            borderBottom: '1px solid rgba(200,160,50,0.2)',
+            padding: '8px 14px',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          }}>
+            <span style={{ fontFamily: "'Cinzel', serif", fontSize: '12px', color: '#c8a040', letterSpacing: '2px', textTransform: 'uppercase' }}>
+              任务日志
             </span>
-            <div className="flex-1 h-px" style={{ background: 'rgba(200,160,50,0.2)' }} />
-            <span className="text-[10px] whitespace-nowrap" style={{ color: 'rgba(200,160,50,0.5)', fontFamily: "'Noto Serif SC', serif" }}>
+            <span style={{ fontFamily: "'Cinzel', serif", fontSize: '11px', color: 'rgba(200,160,50,0.5)' }}>
               {todayFormatted} · {completedCount}/{totalCount}
             </span>
           </div>
-          {dailyTemplates.map((q: any) => (
-            <QuestRow
-              key={q.name}
-              quest={q}
-              completed={completedNames.has(q.name)}
-              onComplete={handleComplete}
-            />
-          ))}
-          {/* Ad-hoc completed quests (not in daily templates) */}
-          {(() => {
-            const templateNames = new Set(DAILY_QUEST_TEMPLATES.map(t => t.name));
-            const adHoc = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name));
-            if (adHoc.length === 0) return null;
-            return (
-              <>
-                <div className="my-2" style={{ borderTop: '1px solid rgba(200,160,50,0.1)' }} />
-                {adHoc.map((q: any) => (
-                  <QuestRow key={q._id} quest={q} completed={true} onComplete={() => {}} />
-                ))}
-              </>
-            );
-          })()}
+
+          <div style={{ padding: '8px 0' }}>
+            {/* ── Section: 每日任务 ── */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              padding: '4px 14px 4px 10px',
+              background: 'rgba(200,140,30,0.07)',
+              borderTop: '1px solid rgba(200,140,30,0.15)',
+              borderBottom: '1px solid rgba(200,140,30,0.15)',
+              marginBottom: '2px',
+            }}>
+              <span style={{ fontSize: '10px', color: '#c87830', fontWeight: 700, lineHeight: 1 }}>⊟</span>
+              <span style={{
+                fontFamily: "'Cinzel', serif", fontSize: '12px',
+                color: '#d4922a', fontWeight: 700, letterSpacing: '0.5px', flex: 1,
+              }}>每日任务</span>
+              <span style={{
+                fontFamily: "'Cinzel', serif", fontSize: '10px',
+                color: 'rgba(200,160,50,0.45)',
+                background: 'rgba(200,140,30,0.1)',
+                padding: '1px 6px', borderRadius: '1px',
+              }}>
+                {dailyTemplates.filter((q: any) => completedNames.has(q.name)).length}/{dailyTemplates.length}
+              </span>
+            </div>
+            <div style={{ padding: '0 0 6px 0' }}>
+              {dailyTemplates.map((q: any) => (
+                <QuestRow
+                  key={q.name}
+                  quest={q}
+                  completed={completedNames.has(q.name)}
+                  onComplete={handleComplete}
+                  indent
+                />
+              ))}
+            </div>
+
+            {/* ── Section: 其他任务 (ad-hoc) ── */}
+            {(() => {
+              const adHoc = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name));
+              if (adHoc.length === 0) return null;
+              return (
+                <>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: '6px',
+                    padding: '4px 14px 4px 10px',
+                    background: 'rgba(200,140,30,0.07)',
+                    borderTop: '1px solid rgba(200,140,30,0.15)',
+                    borderBottom: '1px solid rgba(200,140,30,0.15)',
+                    marginBottom: '2px',
+                  }}>
+                    <span style={{ fontSize: '10px', color: '#c87830', fontWeight: 700, lineHeight: 1 }}>⊟</span>
+                    <span style={{
+                      fontFamily: "'Cinzel', serif", fontSize: '12px',
+                      color: '#d4922a', fontWeight: 700, letterSpacing: '0.5px', flex: 1,
+                    }}>其他任务</span>
+                    <span style={{
+                      fontFamily: "'Cinzel', serif", fontSize: '10px',
+                      color: 'rgba(200,160,50,0.45)',
+                      background: 'rgba(200,140,30,0.1)',
+                      padding: '1px 6px', borderRadius: '1px',
+                    }}>{adHoc.length}/{adHoc.length}</span>
+                  </div>
+                  <div style={{ padding: '0 0 6px 0' }}>
+                    {adHoc.map((q: any) => (
+                      <QuestRow key={q._id} quest={q} completed={true} onComplete={() => {}} indent />
+                    ))}
+                  </div>
+                </>
+              );
+            })()}
+          </div>
         </div>
 
         {/* 成就 — full width */}
