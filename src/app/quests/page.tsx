@@ -2,7 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const STAT_META: Record<string, { zh: string; color: string; bg: string }> = {
@@ -12,6 +12,15 @@ const STAT_META: Record<string, { zh: string; color: string; bg: string }> = {
   SOC:  { zh: "魅力", color: "#40d890", bg: "rgba(64,216,144,0.15)" },
   CRE:  { zh: "创造", color: "#c060ff", bg: "rgba(192,96,255,0.15)" },
 };
+
+const DAILY_QUEST_TEMPLATES: any[] = [
+  { name: "Plan your top 3 priorities", stat: "DISC", xp_reward: 20, objective: "写下今天最重要的三件事，专注执行。", description: "真正的高手从不靠灵感，只靠系统。清单越短，执行力越强。今天写下的三件事，是你对自己最基本的承诺。" },
+  { name: "60 minutes deep work sprint", stat: "INT", xp_reward: 35, objective: "不间断专注工作 60 分钟，关闭一切干扰。", description: "心流不是等来的，是逼出来的。前十分钟最难，撑过去之后大脑会进入另一个频道。一天一次，智力就在悄悄复利。" },
+  { name: "Workout / movement session", stat: "STR", xp_reward: 30, objective: "完成任意形式的体能训练。", description: "身体是你唯一不能外包的资产。健身房、跑步、游泳——形式不重要，动起来才算数。" },
+  { name: "Meaningful outreach or connection", stat: "SOC", xp_reward: 25, objective: "主动联系一个有价值的人。", description: "网络效应不只属于产品，也属于人。每一次主动出击都是在构建你的社交护城河。" },
+  { name: "Create something publishable", stat: "CRE", xp_reward: 40, objective: "创造并发布一件有价值的作品。", description: "发布的那一刻，作品才真正存在。再好的想法，没有发布都是幻觉。代码、内容、功能——上线才算完成。" },
+  { name: "Push a commit", stat: "CRE", xp_reward: 30, objective: "向代码仓库提交至少一个 commit。", description: "代码库里的每一个 commit 都是你存在的证明。不提交，就等于不战斗。" },
+];
 
 function groupQuests(quests: any[]) {
   const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
@@ -144,6 +153,31 @@ export default function QuestLog() {
   const quests = useQuery(api.character.getAllQuests);
   const [selected, setSelected] = useState<any>(null);
   const [showDetail, setShowDetail] = useState(false); // mobile: toggle between list/detail
+  const [autoSelected, setAutoSelected] = useState(false);
+
+  // Auto-select quest from ?q= param
+  useEffect(() => {
+    if (autoSelected || !quests) return;
+    const params = new URLSearchParams(window.location.search);
+    const qName = params.get('q');
+    if (!qName) return;
+    const decoded = decodeURIComponent(qName);
+    // Try DB first
+    const found = quests.find((q: any) => q.name === decoded);
+    if (found) {
+      setSelected(found);
+      setShowDetail(true);
+      setAutoSelected(true);
+      return;
+    }
+    // Fall back to daily template (not yet in DB)
+    const tmpl = DAILY_QUEST_TEMPLATES.find(t => t.name === decoded);
+    if (tmpl) {
+      setSelected({ ...tmpl, completed: false, date: new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' }) });
+      setShowDetail(true);
+      setAutoSelected(true);
+    }
+  }, [quests, autoSelected]);
 
   if (quests === undefined) {
     return (

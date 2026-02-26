@@ -117,7 +117,7 @@ function QuestRow({ quest, completed, onComplete, indent }: {
       <span className="flex-shrink-0 text-xs">{isPenalty ? "💀" : ""}</span>
 
       <Link
-        href="/quests"
+        href={`/quests?q=${encodeURIComponent(quest.name)}`}
         className="flex-1 text-sm"
         style={{
           fontFamily: "'Noto Serif SC', serif",
