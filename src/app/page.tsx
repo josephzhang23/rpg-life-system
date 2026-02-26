@@ -76,24 +76,28 @@ function StatValue({ stat, value, bonus = 0 }: { stat: string; value: number; bo
   );
 }
 
-/* ── Quest row ── */
-function QuestRow({ quest, onComplete }: { quest: any; onComplete: (id: string) => void }) {
+/* ── Quest row (template-based) ── */
+function QuestRow({ quest, completed, onComplete }: {
+  quest: any;
+  completed: boolean;
+  onComplete: (quest: any) => void;
+}) {
   const meta = STAT_META[quest.stat] ?? STAT_META["INT"];
-  const isPenalty = quest.is_penalty;
+  const isPenalty = quest.is_penalty ?? false;
   return (
     <div
       className="flex items-center gap-3 py-[10px] border-b last:border-0"
       style={{ borderColor: isPenalty ? 'rgba(255,60,60,0.08)' : 'rgba(200,160,50,0.08)' }}
     >
       <button
-        onClick={() => !quest.completed && onComplete(quest._id)}
+        onClick={() => !completed && onComplete(quest)}
         className={`w-[18px] h-[18px] rounded-sm flex-shrink-0 border flex items-center justify-center text-[10px] transition-all
-          ${quest.completed
+          ${completed
             ? isPenalty ? "bg-red-900/30 border-red-600/50 text-red-400" : "bg-green-900/30 border-green-600/50 text-green-400"
             : isPenalty ? "border-red-800/50 hover:border-red-500/70 cursor-pointer hover:bg-red-900/10" : "border-yellow-800/50 hover:border-yellow-500/70 cursor-pointer hover:bg-yellow-900/10"
           }`}
       >
-        {quest.completed && (isPenalty ? "✗" : "✓")}
+        {completed && (isPenalty ? "✗" : "✓")}
       </button>
 
       <span className="flex-shrink-0 text-xs">{isPenalty ? "💀" : ""}</span>
@@ -102,8 +106,8 @@ function QuestRow({ quest, onComplete }: { quest: any; onComplete: (id: string) 
         className="flex-1 text-sm"
         style={{
           fontFamily: "'Noto Serif SC', serif",
-          color: quest.completed ? 'rgba(232,213,163,0.3)' : isPenalty ? 'rgba(255,120,100,0.9)' : 'rgba(232,213,163,0.85)',
-          textDecoration: quest.completed ? 'line-through' : 'none'
+          color: completed ? 'rgba(232,213,163,0.3)' : isPenalty ? 'rgba(255,120,100,0.9)' : 'rgba(232,213,163,0.85)',
+          textDecoration: completed ? 'line-through' : 'none'
         }}
       >
         {quest.name}
@@ -208,21 +212,25 @@ function AchievementRow({ achievement }: { achievement: any }) {
 /* ── Main Dashboard ── */
 export default function Dashboard() {
   const data = useQuery(api.character.getDashboard);
-  const initCharacter    = useMutation(api.character.initCharacter);
-  const completeQuest    = useMutation(api.character.completeQuest);
-  const generateDailyQuests = useMutation(api.character.generateDailyQuests);
+  const templates = useQuery(api.character.getDailyTemplates);
+  const initCharacter     = useMutation(api.character.initCharacter);
+  const logCompletedQuest = useMutation(api.character.logCompletedQuest);
 
   const [seeding, setSeeding]       = useState(false);
   const [levelUpMsg, setLevelUpMsg] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (data?.character && data.questsToday?.length === 0) {
-      generateDailyQuests();
-    }
-  }, [data?.character, data?.questsToday?.length, generateDailyQuests]);
+  // Set of quest names completed today (for template status overlay)
+  const completedNames = new Set((data?.questsToday ?? []).map((q: any) => q.name));
 
-  const handleComplete = useCallback(async (questId: string) => {
-    const result = await completeQuest({ questId });
+  const handleComplete = useCallback(async (quest: any) => {
+    const result = await logCompletedQuest({
+      name: quest.name,
+      stat: quest.stat,
+      xp_reward: quest.xp_reward,
+      objective: quest.objective,
+      description: quest.description,
+      is_penalty: quest.is_penalty ?? false,
+    });
     if (result && result.xpResult) {
       const { xpResult } = result;
       const oldOverallLevel = data?.overallLevel ?? 1;
@@ -231,7 +239,7 @@ export default function Dashboard() {
         setTimeout(() => setLevelUpMsg(null), 4000);
       }
     }
-  }, [completeQuest, data]);
+  }, [logCompletedQuest, data]);
 
   const handleSeed = async () => {
     setSeeding(true);
@@ -292,8 +300,9 @@ export default function Dashboard() {
     ? Math.max(0, Math.ceil((new Date(activeBoss.deadline).getTime() - Date.now()) / 86400000))
     : null;
 
-  const completedCount = (questsToday ?? []).filter((q: any) => q.completed).length;
-  const totalCount     = (questsToday ?? []).length;
+  const dailyTemplates = templates ?? [];
+  const completedCount = dailyTemplates.filter((q: any) => completedNames.has(q.name)).length;
+  const totalCount     = dailyTemplates.length;
 
   return (
     <div className="max-w-[960px] mx-auto px-4 py-6 relative">
@@ -618,13 +627,18 @@ export default function Dashboard() {
               {todayFormatted} · {completedCount}/{totalCount}
             </span>
           </div>
-          {questsToday.length === 0 ? (
+          {dailyTemplates.length === 0 ? (
             <p className="text-xs" style={{ color: 'rgba(232,213,163,0.3)', fontFamily: "'Noto Serif SC', serif" }}>
-              今日任务尚未生成。
+              加载中…
             </p>
           ) : (
-            questsToday.map((q: any) => (
-              <QuestRow key={q._id} quest={q} onComplete={handleComplete} />
+            dailyTemplates.map((q: any) => (
+              <QuestRow
+                key={q.name}
+                quest={q}
+                completed={completedNames.has(q.name)}
+                onComplete={handleComplete}
+              />
             ))
           )}
         </div>

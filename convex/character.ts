@@ -146,7 +146,8 @@ export const getDashboard = query({
     ]);
 
     const today = todayISO();
-    const questsToday = quests.filter((q: any) => q.date === today && !q.is_boss);
+    // Only return completed quests — DB is a ledger of victories, not a to-do list
+    const questsToday = quests.filter((q: any) => q.date === today && !q.is_boss && q.completed);
     const activeBoss = quests.find((q: any) => q.is_boss && !q.completed) ?? null;
     const totalXp = stats.reduce((sum: number, s: any) => sum + (s.total_xp ?? 0), 0);
     const { level: overallLevel, xpInLevel: overallXpInLevel, xpNeeded: overallXpNeeded } = levelFromTotalXp(totalXp);
@@ -343,6 +344,53 @@ const DAILY_QUEST_TEMPLATES = [
     objective: "向代码仓库提交至少一个 commit。",
     description: "代码库里的每一个 commit 都是你存在的证明。不提交，就等于不战斗。" },
 ];
+
+export const getDailyTemplates = query({
+  args: {},
+  handler: async () => DAILY_QUEST_TEMPLATES,
+});
+
+// Insert a completed quest record (the only way quests enter the DB now).
+// Does NOT double-insert if already logged today.
+export const logCompletedQuest = mutation({
+  args: {
+    name: v.string(),
+    stat: v.string(),
+    xp_reward: v.number(),
+    objective: v.optional(v.string()),
+    description: v.optional(v.string()),
+    note: v.optional(v.string()),
+    is_penalty: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    const today = todayISO();
+    const existing = (await ctx.db.query("quests").collect()).find(
+      (q: any) => q.name === args.name && q.date === today && !q.is_boss
+    );
+    if (existing) {
+      if (existing.completed) return { ok: true, duplicate: true };
+      // Was pre-inserted uncompleted — patch it
+      await ctx.db.patch(existing._id, { completed: true, note: args.note });
+    } else {
+      await ctx.db.insert("quests", {
+        name: args.name,
+        stat: args.stat,
+        xp_reward: args.xp_reward,
+        objective: args.objective ?? "",
+        description: args.description ?? "",
+        note: args.note ?? "",
+        completed: true,
+        date: today,
+        is_boss: false,
+        is_penalty: args.is_penalty ?? false,
+      } as any);
+    }
+
+    const xpAmount = (args.is_penalty ?? false) ? -Math.abs(args.xp_reward) : args.xp_reward;
+    const xpResult = await applyXpToStat(ctx, args.stat, xpAmount);
+    return { ok: true, xpResult };
+  },
+});
 
 // ── Quest Catalog ──────────────────────────────────────────
 
