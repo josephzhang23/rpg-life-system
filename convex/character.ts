@@ -559,6 +559,7 @@ export const addQuestToday = mutation({
     proof_requirement: v.optional(v.string()),
     is_penalty: v.optional(v.boolean()),
     date: v.optional(v.string()),
+    quest_type: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const date = args.date ?? todayISO();
@@ -578,6 +579,7 @@ export const addQuestToday = mutation({
       date,
       is_boss: false,
       is_penalty: args.is_penalty ?? false,
+      quest_type: args.quest_type ?? "side",
     } as any);
     return { ok: true, created: true };
   },
@@ -742,6 +744,16 @@ export const updateBossProgress = mutation({
     );
     if (!boss) throw new Error("No active boss fight");
     await ctx.db.patch(boss._id, { current_value: args.current_value });
+    return { ok: true };
+  },
+});
+
+export const setQuestType = mutation({
+  args: { questId: v.string(), quest_type: v.string() },
+  handler: async (ctx, args) => {
+    const quest = await ctx.db.get(args.questId as any);
+    if (!quest) throw new Error("Quest not found");
+    await ctx.db.patch(quest._id, { quest_type: args.quest_type });
     return { ok: true };
   },
 });

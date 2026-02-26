@@ -707,40 +707,46 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {/* ── Section: 支线任务 (ad-hoc completed + pending goals) ── */}
+            {/* ── Section: 主线任务 ── */}
             {(() => {
-              const adHoc = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name));
-              const pending = pendingGoals ?? [];
-              if (adHoc.length === 0 && pending.length === 0) return null;
+              const main = (pendingGoals ?? []).filter((q: any) => q.quest_type === 'main');
+              const mainDone = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name) && q.quest_type === 'main');
+              const allMain = [...mainDone, ...main];
+              if (allMain.length === 0) return null;
               return (
                 <>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: '6px',
-                    padding: '4px 14px 4px 10px',
-      
-      
-      
-                    marginBottom: '2px',
-                  }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 14px 4px 10px', marginBottom: '2px' }}>
                     <span style={{ fontSize: '10px', color: '#c87830', fontWeight: 700, lineHeight: 1 }}>⊟</span>
-                    <span style={{
-                      fontFamily: "'Cinzel', serif", fontSize: '12px',
-                      color: '#d4922a', fontWeight: 700, letterSpacing: '0.5px', flex: 1,
-                    }}>支线任务</span>
-                    <span style={{
-                      fontFamily: "'Cinzel', serif", fontSize: '10px',
-                      color: 'rgba(200,160,50,0.45)',
-                      background: 'rgba(200,140,30,0.1)',
-                      padding: '1px 6px', borderRadius: '1px',
-                    }}>{adHoc.length}/{adHoc.length + pending.length}</span>
+                    <span style={{ fontFamily: "'Cinzel', serif", fontSize: '12px', color: '#d4922a', fontWeight: 700, letterSpacing: '0.5px', flex: 1 }}>主线任务</span>
+                    <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: 'rgba(200,160,50,0.45)', background: 'rgba(200,140,30,0.1)', padding: '1px 6px', borderRadius: '1px' }}>
+                      {mainDone.length}/{allMain.length}
+                    </span>
                   </div>
                   <div style={{ padding: '0 0 6px 0' }}>
-                    {adHoc.map((q: any) => (
-                      <QuestRow key={q._id} quest={q} completed={true} onComplete={() => {}} indent />
-                    ))}
-                    {pending.map((q: any) => (
-                      <QuestRow key={q._id} quest={q} completed={false} onComplete={() => {}} indent />
-                    ))}
+                    {mainDone.map((q: any) => <QuestRow key={q._id} quest={q} completed={true} onComplete={() => {}} indent />)}
+                    {main.map((q: any) => <QuestRow key={q._id} quest={q} completed={false} onComplete={() => {}} indent />)}
+                  </div>
+                </>
+              );
+            })()}
+
+            {/* ── Section: 支线任务 ── */}
+            {(() => {
+              const adHoc = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name) && q.quest_type !== 'main');
+              const side = (pendingGoals ?? []).filter((q: any) => q.quest_type !== 'main');
+              if (adHoc.length === 0 && side.length === 0) return null;
+              return (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 14px 4px 10px', marginBottom: '2px' }}>
+                    <span style={{ fontSize: '10px', color: '#c87830', fontWeight: 700, lineHeight: 1 }}>⊟</span>
+                    <span style={{ fontFamily: "'Cinzel', serif", fontSize: '12px', color: '#d4922a', fontWeight: 700, letterSpacing: '0.5px', flex: 1 }}>支线任务</span>
+                    <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: 'rgba(200,160,50,0.45)', background: 'rgba(200,140,30,0.1)', padding: '1px 6px', borderRadius: '1px' }}>
+                      {adHoc.length}/{adHoc.length + side.length}
+                    </span>
+                  </div>
+                  <div style={{ padding: '0 0 6px 0' }}>
+                    {adHoc.map((q: any) => <QuestRow key={q._id} quest={q} completed={true} onComplete={() => {}} indent />)}
+                    {side.map((q: any) => <QuestRow key={q._id} quest={q} completed={false} onComplete={() => {}} indent />)}
                   </div>
                 </>
               );

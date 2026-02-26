@@ -33,6 +33,7 @@ export default defineSchema({
     steps: v.optional(v.array(v.string())),     // actionable step-by-step instructions
     proof_requirement: v.optional(v.string()),  // what counts as proof of completion
     note: v.optional(v.string()),               // completion record: what actually happened / proof submitted
+    quest_type: v.optional(v.string()),         // "main" | "side" | "daily"
     is_boss: v.optional(v.boolean()),
     is_penalty: v.optional(v.boolean()),
     deadline: v.optional(v.string()),
