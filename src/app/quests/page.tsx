@@ -107,7 +107,7 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
           <>
             <div className="mb-4">
               <div className="text-[11px] tracking-[3px] mb-2 font-bold uppercase"
-                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>为何重要</div>
+                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>描述</div>
               <p className="text-sm leading-relaxed"
                 style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(200,180,120,0.7)', lineHeight: '1.9', fontStyle: 'italic' }}>
                 {quest.description}
@@ -121,8 +121,6 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
         {quest.steps && quest.steps.length > 0 && (
           <>
             <div className="mt-4 mb-4">
-              <div className="text-[11px] tracking-[3px] mb-3 font-bold uppercase"
-                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>行动步骤</div>
               <ol style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {quest.steps.map((step: string, i: number) => (
                   <li key={i} className="flex gap-3 mb-2">
@@ -145,8 +143,6 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
         {quest.proof_requirement && (
           <>
             <div className="mt-4 mb-4">
-              <div className="text-[11px] tracking-[3px] mb-2 font-bold uppercase"
-                style={{ fontFamily: "'Noto Serif SC', serif", color: '#c8a040' }}>完成证明</div>
               <div className="flex gap-2 items-start px-3 py-2 rounded-sm"
                 style={{ background: 'rgba(200,160,50,0.06)', border: '1px solid rgba(200,160,50,0.15)' }}>
                 <span style={{ fontSize: '14px', flexShrink: 0 }}>📜</span>
@@ -162,8 +158,6 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
         {quest.note && (
           <>
             <div className="mb-4">
-              <div className="text-[11px] tracking-[3px] mb-2 font-bold uppercase"
-                style={{ fontFamily: "'Noto Serif SC', serif", color: '#40c060' }}>已提交的证明</div>
               <div className="flex gap-2 items-start px-3 py-2 rounded-sm"
                 style={{ background: 'rgba(64,192,96,0.06)', border: '1px solid rgba(64,192,96,0.2)' }}>
                 <span style={{ fontSize: '14px', flexShrink: 0 }}>✓</span>
