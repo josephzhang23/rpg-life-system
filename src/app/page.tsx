@@ -62,38 +62,27 @@ const DAILY_QUEST_TEMPLATES = [
     proof_requirement: "提供 commit 链接或 SHA" },
 ];
 
-/* ── WoW-style XP bar ── */
+/* ── WoW-style stat row (no progress bar, like WoW character sheet) ── */
 function StatValue({ stat, value, bonus = 0 }: { stat: string; value: number; bonus?: number }) {
   const meta = STAT_META[stat];
-  // Base: floor(sqrt(total_xp) * 3)
-  const raw = Math.sqrt(value) * 3;
-  const base = Math.floor(raw);
+  const base = Math.floor(Math.sqrt(value) * 3);
   const total = base + bonus;
-  // Progress bar: fractional progress to next integer point
-  const pct = value === 0 ? 0 : (raw - base) * 100;
 
   return (
-    <div className="flex items-center gap-3 mb-4 last:mb-0">
-      {/* Icon */}
-      <span className="text-base w-6 text-center flex-shrink-0">{meta.icon}</span>
-
-      {/* Chinese name */}
-      <span className="text-sm font-bold w-8 flex-shrink-0"
-        style={{ fontFamily: "'Noto Serif SC', serif", color: '#d4b87a' }}>
-        {meta.zh}
-      </span>
-
-      {/* Bar */}
-      <div className="flex-1 h-[6px] rounded-sm overflow-hidden border border-white/[0.04]"
-        style={{ background: 'rgba(255,255,255,0.04)' }}>
-        <div
-          className={`h-full rounded-sm transition-all duration-700 ${meta.bar}`}
-          style={{ width: `${pct}%` }}
-        />
+    <div className="flex items-center justify-between py-[6px] border-b last:border-0"
+      style={{ borderColor: 'rgba(200,160,50,0.08)' }}>
+      <div className="flex items-center gap-2">
+        {/* Icon */}
+        <span className="text-base w-6 text-center flex-shrink-0">{meta.icon}</span>
+        {/* Chinese name */}
+        <span className="text-sm font-bold"
+          style={{ fontFamily: "'Noto Serif SC', serif", color: '#d4b87a' }}>
+          {meta.zh}
+        </span>
       </div>
 
-      {/* Total value + gear bonus indicator */}
-      <div className="flex items-baseline gap-1 flex-shrink-0" style={{ minWidth: '64px', justifyContent: 'flex-end' }}>
+      {/* Value + gear bonus */}
+      <div className="flex items-baseline gap-1">
         <span className="text-base font-bold tabular-nums"
           style={{ color: bonus > 0 ? '#ffd700' : meta.color, fontFamily: "'Cinzel', serif" }}>
           {total}
