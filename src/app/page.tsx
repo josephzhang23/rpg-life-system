@@ -116,16 +116,17 @@ function QuestRow({ quest, completed, onComplete, indent }: {
 
       <span className="flex-shrink-0 text-xs">{isPenalty ? "💀" : ""}</span>
 
-      <span
+      <Link
+        href="/quests"
         className="flex-1 text-sm"
         style={{
           fontFamily: "'Noto Serif SC', serif",
           color: completed ? 'rgba(232,213,163,0.3)' : isPenalty ? 'rgba(255,120,100,0.9)' : 'rgba(232,213,163,0.85)',
-          textDecoration: completed ? 'line-through' : 'none'
+          textDecoration: 'none',
         }}
       >
         {quest.name}
-      </span>
+      </Link>
 
       <span
         className="text-[11px] font-bold px-2 py-[2px] rounded-sm flex-shrink-0"
