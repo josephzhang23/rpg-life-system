@@ -29,6 +29,15 @@ const STREAK_META: Record<string, { icon: string; zh: string }> = {
   reading:   { icon: "📚", zh: "阅读" },
 };
 
+const DAILY_QUEST_TEMPLATES = [
+  { name: "Plan your top 3 priorities", stat: "DISC", xp_reward: 20, objective: "写下今天最重要的三件事，专注执行。", description: "真正的高手从不靠灵感，只靠系统。清单越短，执行力越强。" },
+  { name: "60 minutes deep work sprint", stat: "INT", xp_reward: 35, objective: "不间断专注工作 60 分钟，关闭一切干扰。", description: "心流不是等来的，是逼出来的。前十分钟最难，撑过去之后大脑会进入另一个频道。" },
+  { name: "Workout / movement session", stat: "STR", xp_reward: 30, objective: "完成任意形式的体能训练。", description: "身体是你唯一不能外包的资产。健身房、跑步、游泳——形式不重要，动起来才算数。" },
+  { name: "Meaningful outreach or connection", stat: "SOC", xp_reward: 25, objective: "主动联系一个有价值的人。", description: "网络效应不只属于产品，也属于人。每一次主动出击都是在构建你的社交护城河。" },
+  { name: "Create something publishable", stat: "CRE", xp_reward: 40, objective: "创造并发布一件有价值的作品。", description: "发布的那一刻，作品才真正存在。再好的想法，没有发布都是幻觉。" },
+  { name: "Push a commit", stat: "CRE", xp_reward: 30, objective: "向代码仓库提交至少一个 commit。", description: "代码库里的每一个 commit 都是你存在的证明。不提交，就等于不战斗。" },
+];
+
 /* ── WoW-style XP bar ── */
 function StatValue({ stat, value, bonus = 0 }: { stat: string; value: number; bonus?: number }) {
   const meta = STAT_META[stat];
@@ -212,7 +221,6 @@ function AchievementRow({ achievement }: { achievement: any }) {
 /* ── Main Dashboard ── */
 export default function Dashboard() {
   const data = useQuery(api.character.getDashboard);
-  const templates = useQuery(api.character.getDailyTemplates);
   const initCharacter     = useMutation(api.character.initCharacter);
   const logCompletedQuest = useMutation(api.character.logCompletedQuest);
 
@@ -300,7 +308,7 @@ export default function Dashboard() {
     ? Math.max(0, Math.ceil((new Date(activeBoss.deadline).getTime() - Date.now()) / 86400000))
     : null;
 
-  const dailyTemplates = templates ?? [];
+  const dailyTemplates = DAILY_QUEST_TEMPLATES;
   const completedCount = dailyTemplates.filter((q: any) => completedNames.has(q.name)).length;
   const totalCount     = dailyTemplates.length;
 
@@ -627,20 +635,14 @@ export default function Dashboard() {
               {todayFormatted} · {completedCount}/{totalCount}
             </span>
           </div>
-          {dailyTemplates.length === 0 ? (
-            <p className="text-xs" style={{ color: 'rgba(232,213,163,0.3)', fontFamily: "'Noto Serif SC', serif" }}>
-              加载中…
-            </p>
-          ) : (
-            dailyTemplates.map((q: any) => (
-              <QuestRow
-                key={q.name}
-                quest={q}
-                completed={completedNames.has(q.name)}
-                onComplete={handleComplete}
-              />
-            ))
-          )}
+          {dailyTemplates.map((q: any) => (
+            <QuestRow
+              key={q.name}
+              quest={q}
+              completed={completedNames.has(q.name)}
+              onComplete={handleComplete}
+            />
+          ))}
         </div>
 
         {/* 成就 — full width */}

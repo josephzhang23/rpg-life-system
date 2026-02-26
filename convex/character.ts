@@ -347,7 +347,7 @@ const DAILY_QUEST_TEMPLATES = [
 
 export const getDailyTemplates = query({
   args: {},
-  handler: async () => DAILY_QUEST_TEMPLATES,
+  handler: async (_ctx: any, _args: any) => DAILY_QUEST_TEMPLATES,
 });
 
 // Insert a completed quest record (the only way quests enter the DB now).
