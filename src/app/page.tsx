@@ -785,12 +785,6 @@ export default function Dashboard() {
               ))}
             </div>
 
-          </div>{/* end 每日任务 padding */}
-          </div>{/* end LEFT col */}
-
-          {/* ── RIGHT: 主线 + 支线 ── */}
-          <div>
-          <div style={{ padding: '8px 0' }}>
             {/* ── Section: 主线任务 ── */}
             {(() => {
               const main = (pendingGoals ?? []).filter((q: any) => q.quest_type === 'main');
@@ -814,6 +808,12 @@ export default function Dashboard() {
               );
             })()}
 
+          </div>{/* end LEFT padding */}
+          </div>{/* end LEFT col */}
+
+          {/* ── RIGHT: 支线任务 ── */}
+          <div>
+          <div style={{ padding: '8px 0' }}>
             {/* ── Section: 支线任务 ── */}
             {(() => {
               const adHoc = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name) && q.quest_type !== 'main');
