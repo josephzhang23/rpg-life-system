@@ -309,8 +309,10 @@ export default function Dashboard() {
     : null;
 
   const dailyTemplates = DAILY_QUEST_TEMPLATES;
-  const completedCount = dailyTemplates.filter((q: any) => completedNames.has(q.name)).length;
-  const totalCount     = dailyTemplates.length;
+  const templateNames  = new Set(DAILY_QUEST_TEMPLATES.map(t => t.name));
+  const adHocCompleted = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name));
+  const completedCount = dailyTemplates.filter((q: any) => completedNames.has(q.name)).length + adHocCompleted.length;
+  const totalCount     = dailyTemplates.length + adHocCompleted.length;
 
   return (
     <div className="max-w-[960px] mx-auto px-4 py-6 relative">
@@ -643,6 +645,20 @@ export default function Dashboard() {
               onComplete={handleComplete}
             />
           ))}
+          {/* Ad-hoc completed quests (not in daily templates) */}
+          {(() => {
+            const templateNames = new Set(DAILY_QUEST_TEMPLATES.map(t => t.name));
+            const adHoc = (questsToday ?? []).filter((q: any) => !templateNames.has(q.name));
+            if (adHoc.length === 0) return null;
+            return (
+              <>
+                <div className="my-2" style={{ borderTop: '1px solid rgba(200,160,50,0.1)' }} />
+                {adHoc.map((q: any) => (
+                  <QuestRow key={q._id} quest={q} completed={true} onComplete={() => {}} />
+                ))}
+              </>
+            );
+          })()}
         </div>
 
         {/* 成就 — full width */}
