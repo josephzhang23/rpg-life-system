@@ -484,8 +484,8 @@ export default function Dashboard() {
                   <div className="flex-1 h-[8px] rounded-sm overflow-hidden" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(180,30,30,0.4)' }}>
                     <div className="h-full rounded-sm" style={{ width: '100%', background: 'linear-gradient(90deg, #8b0000, #cc2020)', boxShadow: '0 0 6px rgba(200,30,30,0.5)' }} />
                   </div>
-                  <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: 'rgba(255,120,120,0.8)', flexShrink: 0, minWidth: '60px', textAlign: 'right' }}>
-                    {maxHp} / {maxHp}
+                  <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: 'rgba(255,120,120,0.8)', flexShrink: 0, minWidth: '32px', textAlign: 'right' }}>
+                    {maxHp}
                   </span>
                 </div>
               );
@@ -502,8 +502,8 @@ export default function Dashboard() {
                   <div className="flex-1 h-[8px] rounded-sm overflow-hidden" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(30,60,180,0.4)' }}>
                     <div className="h-full rounded-sm" style={{ width: '100%', background: 'linear-gradient(90deg, #000080, #2060cc)', boxShadow: '0 0 6px rgba(30,80,220,0.5)' }} />
                   </div>
-                  <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: 'rgba(100,160,255,0.8)', flexShrink: 0, minWidth: '60px', textAlign: 'right' }}>
-                    {maxMana} / {maxMana}
+                  <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: 'rgba(100,160,255,0.8)', flexShrink: 0, minWidth: '32px', textAlign: 'right' }}>
+                    {maxMana}
                   </span>
                 </div>
               );
