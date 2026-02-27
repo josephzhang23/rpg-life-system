@@ -160,6 +160,24 @@ body {
 }
 .boss-active { animation: bossGlow 2.5s ease-in-out infinite; }
 
+/* ── WoW Action Bar responsive width ── */
+.wow-action-frame {
+  width: calc(5 * 54px + 4 * 5px + 2 * 14px + 4px); /* mobile: fits 5 slots */
+  max-width: 94vw;
+}
+.wow-xp-bar {
+  width: calc(5 * 54px + 4 * 5px + 2 * 14px + 4px);
+  max-width: 94vw;
+}
+@media (min-width: 640px) {
+  .wow-action-frame {
+    width: clamp(400px, 60vw, 680px);
+  }
+  .wow-xp-bar {
+    width: clamp(400px, 60vw, 680px);
+  }
+}
+
 /* ── WoW Floating Combat Text ── */
 @keyframes wowFCT {
   0%   { opacity: 0;   transform: translateY(0)    scale(1.35); }

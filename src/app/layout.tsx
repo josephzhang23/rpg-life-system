@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ConvexClientProvider } from "../components/ConvexClientProvider";
+import { XpProvider } from "../lib/xpContext";
 import BottomBar from "../components/BottomBar";
 
 export const metadata: Metadata = {
@@ -26,12 +27,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ConvexClientProvider>
-          {/* Pad bottom so content isn't hidden under fixed nav bar (72px bar height) */}
-          <div style={{ paddingBottom: "80px" }}>
-            {children}
-          </div>
-          {/* Fixed bottom nav — anchored to visual viewport, always above Safari toolbar */}
-          <BottomBar />
+          <XpProvider>
+            <div style={{ paddingBottom: "114px" }}>
+              {children}
+            </div>
+            <BottomBar />
+          </XpProvider>
         </ConvexClientProvider>
       </body>
     </html>

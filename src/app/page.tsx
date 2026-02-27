@@ -3,6 +3,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useXp } from "../lib/xpContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -141,7 +142,7 @@ function QuestRow({ quest, completed, onComplete, indent }: {
           textDecoration: 'none',
         }}
       >
-        {quest.name.replace(/^💀\s*/, '')}
+        {quest.name}
       </Link>
 
       <span
@@ -246,6 +247,7 @@ export default function Dashboard() {
   const initCharacter     = useMutation(api.character.initCharacter);
   const logCompletedQuest = useMutation(api.character.logCompletedQuest);
 
+  const { setXp } = useXp();
   const router = useRouter();
   const [seeding, setSeeding]       = useState(false);
   const [levelUpMsg, setLevelUpMsg] = useState<string | null>(null);
@@ -296,6 +298,17 @@ export default function Dashboard() {
     prevXpRef.current = current;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.stats]);
+
+  // Sync XP to context so BottomBar can render it
+  useEffect(() => {
+    if (data?.overallLevel != null) {
+      setXp({
+        level: data.overallLevel,
+        xpInLevel: data.overallXpInLevel ?? 0,
+        xpNeeded: data.overallXpNeeded ?? 500,
+      });
+    }
+  }, [data?.overallLevel, data?.overallXpInLevel, data?.overallXpNeeded, setXp]);
 
   // Set of quest names completed today (for template status overlay)
   const completedNames = new Set((data?.questsToday ?? []).map((q: any) => q.name));
@@ -841,35 +854,7 @@ export default function Dashboard() {
 
       </div>{/* end Main Grid */}
 
-      {/* ── Fixed XP bar above bottom nav ── */}
-      <div style={{
-        position: 'fixed', bottom: '58px', left: 0, right: 0, zIndex: 30,
-        height: '20px',
-        background: 'rgba(5,3,1,0.98)',
-        borderTop: '1px solid rgba(100,70,15,0.9)',
-        borderBottom: '1px solid rgba(0,0,0,0.8)',
-        boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.9)',
-      }}>
-        {/* XP fill */}
-        <div style={{
-          height: '100%',
-          width: `${Math.min(100, Math.round(((overallXpInLevel ?? 0) / (overallXpNeeded ?? 500)) * 100))}%`,
-          background: 'linear-gradient(180deg, #b080ff 0%, #7040c8 40%, #4a20a0 70%, #301078 100%)',
-          boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.4), 0 0 12px rgba(140,70,240,0.5)',
-          transition: 'width 0.7s ease',
-        }} />
-        {/* Overlay text centered in bar */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '10px', color: 'rgba(230,210,255,0.9)',
-          fontFamily: "'Cinzel', serif", letterSpacing: '1.5px',
-          textShadow: '0 0 3px #000, 0 1px 3px #000',
-          pointerEvents: 'none',
-        }}>
-          Lv.{overallLevel} &nbsp;·&nbsp; {overallXpInLevel ?? 0} / {overallXpNeeded ?? 500} XP
-        </div>
-      </div>
+
 
       {/* Footer */}
       <div className="mt-8 flex justify-center">
