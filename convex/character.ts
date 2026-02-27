@@ -796,6 +796,32 @@ export const updateBossProgress = mutation({
   },
 });
 
+export const patchBoss = mutation({
+  args: {
+    name: v.optional(v.string()),
+    objective: v.optional(v.string()),
+    description: v.optional(v.string()),
+    target_value: v.optional(v.number()),
+    deadline: v.optional(v.string()),
+    xp_reward: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const boss = (await ctx.db.query("quests").collect()).find(
+      (q: any) => q.is_boss && !q.completed
+    );
+    if (!boss) throw new Error("No active boss fight");
+    const patch: any = {};
+    if (args.name !== undefined) patch.name = args.name;
+    if (args.objective !== undefined) patch.objective = args.objective;
+    if (args.description !== undefined) patch.description = args.description;
+    if (args.target_value !== undefined) patch.target_value = args.target_value;
+    if (args.deadline !== undefined) patch.deadline = args.deadline;
+    if (args.xp_reward !== undefined) patch.xp_reward = args.xp_reward;
+    await ctx.db.patch(boss._id, patch);
+    return { ok: true };
+  },
+});
+
 export const setQuestType = mutation({
   args: { questId: v.string(), quest_type: v.string() },
   handler: async (ctx, args) => {
