@@ -17,18 +17,14 @@ export default function BottomBar() {
   return (
     <div style={{
       background: "linear-gradient(180deg, #1e1508 0%, #110d04 100%)",
-      boxShadow: "0 -1px 0 rgba(200,160,50,0.45), 0 -4px 20px rgba(0,0,0,0.8)",
+      boxShadow: "0 -4px 20px rgba(0,0,0,0.8)",
       position: "fixed",
       bottom: 0,
       left: 0,
       right: 0,
       zIndex: 100,
     }}>
-      {/* Gold top edge */}
-      <div style={{
-        position: "absolute", top: 0, left: 0, right: 0, height: "2px",
-        background: "linear-gradient(90deg, transparent, rgba(200,160,50,0.5) 20%, rgba(240,200,80,0.8) 50%, rgba(200,160,50,0.5) 80%, transparent)",
-      }} />
+
 
       {/* Buttons row */}
       <div style={{
