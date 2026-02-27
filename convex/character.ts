@@ -442,9 +442,10 @@ export const logCompletedQuest = mutation({
     proof_requirement: v.optional(v.string()),
     note: v.optional(v.string()),
     is_penalty: v.optional(v.boolean()),
+    date: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const today = todayISO();
+    const today = args.date ?? todayISO();
     const existing = (await ctx.db.query("quests").collect()).find(
       (q: any) => q.name === args.name && q.date === today && !q.is_boss
     );
