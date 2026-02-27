@@ -431,104 +431,80 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── Header — WoW name panel style ── */}
-      <div className="mb-6 pb-5" style={{ borderBottom: '1px solid rgba(200,160,50,0.25)' }}>
-        <div className="flex gap-3" style={{ alignItems: 'stretch' }}>
-
-          {/* Avatar — circular WoW portrait */}
-          <div
-            className="flex-shrink-0 flex items-center justify-center text-3xl"
-            style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '50%',
+      {/* ── WoW Classic Character Frame ── */}
+      {(() => {
+        const strStat = (stats ?? []).find((s: any) => s.stat_id === 'STR');
+        const intStat = (stats ?? []).find((s: any) => s.stat_id === 'INT');
+        const maxHp   = 100 + Math.floor(Math.sqrt(strStat?.total_xp ?? 0) * 3) * 10;
+        const maxMana = 100 + Math.floor(Math.sqrt(intStat?.total_xp ?? 0) * 3) * 10;
+        return (
+          <div className="mb-4" style={{
+            display: 'inline-flex', gap: '6px', alignItems: 'center',
+            background: 'rgba(0,0,0,0.55)',
+            border: '1px solid rgba(80,55,15,0.9)',
+            borderRadius: '3px',
+            padding: '5px 8px 5px 5px',
+            boxShadow: 'inset 0 0 8px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,160,50,0.12)',
+          }}>
+            {/* Portrait */}
+            <div style={{
+              width: '42px', height: '42px', borderRadius: '50%', flexShrink: 0,
               background: 'radial-gradient(circle at 35% 30%, #2a1a05, #0a0805)',
-              border: '2px solid #c8a030',
-              boxShadow: '0 0 0 1px rgba(200,160,50,0.25), 0 0 16px rgba(200,120,0,0.3), inset 0 0 12px rgba(0,0,0,0.6)',
-              alignSelf: 'center',
-            }}
-          >
-            ⚔️
-          </div>
+              border: '2px solid #8a6a20',
+              boxShadow: 'inset 0 0 8px rgba(0,0,0,0.8)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '20px',
+            }}>⚔️</div>
 
-          {/* Right: 3 rows stacked, space-between */}
-          <div className="flex-1 min-w-0 flex flex-col justify-between" style={{ gap: '6px' }}>
+            {/* Name + bars */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: '140px' }}>
+              {/* Name */}
+              <div style={{
+                fontFamily: "'Cinzel', serif", fontSize: '12px',
+                color: '#f0d060', fontWeight: 700, letterSpacing: '1px', lineHeight: 1,
+              }}>{character.name} <span style={{ color: 'rgba(200,160,50,0.5)', fontSize: '10px' }}>Lv.{overallLevel}</span></div>
 
-            {/* Row 1: Name + Level */}
-            <div className="flex items-baseline justify-between gap-2">
-              <h1
-                style={{
-                  fontFamily: "'Cinzel', serif",
-                  color: '#f0c060',
-                  fontSize: '18px',
-                  letterSpacing: '2px',
-                  lineHeight: 1.2,
-                  margin: 0,
-                }}
-              >
-                {character.name.toUpperCase()}
-              </h1>
-              <span style={{ fontFamily: "'Cinzel', serif", fontSize: '12px', color: 'rgba(200,160,50,0.6)', flexShrink: 0 }}>
-                Lv.{overallLevel}
-              </span>
-            </div>
-
-            {/* Row 2: HP bar (red) */}
-            {(() => {
-              const strStat = (stats ?? []).find((s: any) => s.stat_id === 'STR');
-              const strDisplay = Math.floor(Math.sqrt((strStat?.total_xp ?? 0)) * 3);
-              const maxHp = 100 + strDisplay * 10;
-              return (
-                <div className="flex items-center gap-2">
-                  <span style={{ fontSize: '10px', color: '#ff6060', fontFamily: "'Cinzel', serif", width: '12px', textAlign: 'center' }}>♥</span>
-                  <div className="flex-1 h-[8px] rounded-sm overflow-hidden" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(180,30,30,0.4)' }}>
-                    <div className="h-full rounded-sm" style={{ width: '100%', background: 'linear-gradient(90deg, #8b0000, #cc2020)', boxShadow: '0 0 6px rgba(200,30,30,0.5)' }} />
-                  </div>
-                  <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: 'rgba(255,120,120,0.8)', flexShrink: 0, minWidth: '32px', textAlign: 'right' }}>
-                    {maxHp}
-                  </span>
-                </div>
-              );
-            })()}
-
-            {/* Row 3: Mana bar (blue) */}
-            {(() => {
-              const intStat = (stats ?? []).find((s: any) => s.stat_id === 'INT');
-              const intDisplay = Math.floor(Math.sqrt((intStat?.total_xp ?? 0)) * 3);
-              const maxMana = 100 + intDisplay * 10;
-              return (
-                <div className="flex items-center gap-2">
-                  <span style={{ fontSize: '10px', color: '#4080ff', fontFamily: "'Cinzel', serif", width: '12px', textAlign: 'center' }}>◆</span>
-                  <div className="flex-1 h-[8px] rounded-sm overflow-hidden" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(30,60,180,0.4)' }}>
-                    <div className="h-full rounded-sm" style={{ width: '100%', background: 'linear-gradient(90deg, #000080, #2060cc)', boxShadow: '0 0 6px rgba(30,80,220,0.5)' }} />
-                  </div>
-                  <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: 'rgba(100,160,255,0.8)', flexShrink: 0, minWidth: '32px', textAlign: 'right' }}>
-                    {maxMana}
-                  </span>
-                </div>
-              );
-            })()}
-
-            {/* Row 3: XP bar */}
-            <div>
-              <div className="w-full h-[5px] rounded-full overflow-hidden"
-                style={{ background: 'rgba(200,160,50,0.12)', border: '1px solid rgba(200,160,50,0.2)' }}>
-                <div className="h-full rounded-full transition-all duration-700"
-                  style={{
-                    width: `${Math.min(100, Math.round(((overallXpInLevel ?? 0) / (overallXpNeeded ?? 500)) * 100))}%`,
-                    background: 'linear-gradient(90deg, #c8a030, #f0d060)',
-                    boxShadow: '0 0 6px rgba(240,200,60,0.5)',
+              {/* HP bar (green) */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{
+                  flex: 1, height: '9px',
+                  background: 'rgba(0,0,0,0.7)',
+                  border: '1px solid rgba(0,80,0,0.8)',
+                  borderRadius: '1px', overflow: 'hidden',
+                }}>
+                  <div style={{
+                    height: '100%', width: '100%',
+                    background: 'linear-gradient(180deg, #00c040 0%, #008030 60%, #006020 100%)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)',
                   }} />
+                </div>
+                <span style={{ fontSize: '9px', color: 'rgba(120,220,120,0.7)', fontFamily: "'Cinzel', serif", whiteSpace: 'nowrap', minWidth: '28px', textAlign: 'right' }}>
+                  {maxHp}
+                </span>
               </div>
-              <div className="text-[10px] mt-[3px] text-right tabular-nums"
-                style={{ color: 'rgba(200,160,50,0.4)', fontFamily: "'Cinzel', serif" }}>
-                {overallXpInLevel ?? 0} / {overallXpNeeded ?? 500} XP
+
+              {/* Mana bar (blue) */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{
+                  flex: 1, height: '9px',
+                  background: 'rgba(0,0,0,0.7)',
+                  border: '1px solid rgba(0,40,120,0.8)',
+                  borderRadius: '1px', overflow: 'hidden',
+                }}>
+                  <div style={{
+                    height: '100%', width: '100%',
+                    background: 'linear-gradient(180deg, #2080ff 0%, #1050c0 60%, #0030a0 100%)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)',
+                  }} />
+                </div>
+                <span style={{ fontSize: '9px', color: 'rgba(100,160,255,0.7)', fontFamily: "'Cinzel', serif", whiteSpace: 'nowrap', minWidth: '28px', textAlign: 'right' }}>
+                  {maxMana}
+                </span>
               </div>
             </div>
-
           </div>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* ── Main Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -854,6 +830,30 @@ export default function Dashboard() {
         </div>
 
       </div>{/* end Main Grid */}
+
+      {/* ── Fixed XP bar above bottom nav ── */}
+      <div style={{
+        position: 'fixed', bottom: '58px', left: 0, right: 0, zIndex: 30,
+        height: '12px',
+        background: 'rgba(5,3,1,0.95)',
+        borderTop: '1px solid rgba(80,55,10,0.8)',
+      }}>
+        <div style={{
+          height: '100%',
+          width: `${Math.min(100, Math.round(((overallXpInLevel ?? 0) / (overallXpNeeded ?? 500)) * 100))}%`,
+          background: 'linear-gradient(180deg, #9060d0 0%, #5030a0 60%, #3a1880 100%)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 0 8px rgba(120,60,200,0.4)',
+          transition: 'width 0.7s ease',
+        }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '8px', color: 'rgba(200,180,255,0.6)',
+          fontFamily: "'Cinzel', serif", letterSpacing: '1px', pointerEvents: 'none',
+        }}>
+          XP {overallXpInLevel ?? 0} / {overallXpNeeded ?? 500}
+        </div>
+      </div>
 
       {/* Footer */}
       <div className="mt-8 flex justify-center">
