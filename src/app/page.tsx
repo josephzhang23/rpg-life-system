@@ -581,8 +581,8 @@ export default function Dashboard() {
 
               {/* Dungeon Header Bar */}
               <div style={{
-                background: 'linear-gradient(90deg, rgba(60,20,8,0.9), rgba(35,12,4,0.7), rgba(60,20,8,0.9))',
-                borderBottom: '1px solid rgba(120,70,20,0.45)',
+                background: 'linear-gradient(90deg, rgba(20,6,2,0.97), rgba(10,3,1,0.95), rgba(20,6,2,0.97))',
+                borderBottom: '1px solid rgba(180,80,20,0.6)',
                 padding: '7px 12px',
                 display: 'flex', alignItems: 'center', gap: '8px',
                 position: 'relative', zIndex: 1,
@@ -593,9 +593,10 @@ export default function Dashboard() {
                   display: 'inline-block', flexShrink: 0,
                 }} />
                 <span style={{
-                  fontFamily: "'Cinzel', serif", fontSize: '11px',
-                  letterSpacing: '2px', color: '#ff8060',
+                  fontFamily: "'Cinzel', serif", fontSize: '12px',
+                  letterSpacing: '3px', color: '#ffaa80',
                   textTransform: 'uppercase', fontWeight: 700,
+                  textShadow: '0 0 8px rgba(255,100,40,0.6)',
                 }}>{activeBoss.dungeon ?? '副本进行中'}</span>
                 <span style={{
                   fontSize: '10px', color: 'rgba(200,160,100,0.5)',
