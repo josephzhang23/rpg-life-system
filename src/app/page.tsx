@@ -626,6 +626,11 @@ export default function Dashboard() {
                     <>
                       {/* MRR Numbers — primary focus */}
                       <div style={{ marginBottom: '10px' }}>
+                        <div style={{
+                          fontSize: '10px', color: 'rgba(200,160,80,0.5)',
+                          fontFamily: "'Cinzel', serif", letterSpacing: '2px',
+                          marginBottom: '3px',
+                        }}>MRR</div>
                         <span style={{
                           fontFamily: "'Cinzel', serif", fontSize: '26px', fontWeight: 700,
                           color: '#f0d060', lineHeight: 1,
