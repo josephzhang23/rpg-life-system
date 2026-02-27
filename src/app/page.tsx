@@ -844,24 +844,30 @@ export default function Dashboard() {
       {/* ── Fixed XP bar above bottom nav ── */}
       <div style={{
         position: 'fixed', bottom: '58px', left: 0, right: 0, zIndex: 30,
-        height: '12px',
-        background: 'rgba(5,3,1,0.95)',
-        borderTop: '1px solid rgba(80,55,10,0.8)',
+        height: '20px',
+        background: 'rgba(5,3,1,0.98)',
+        borderTop: '1px solid rgba(100,70,15,0.9)',
+        borderBottom: '1px solid rgba(0,0,0,0.8)',
+        boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.9)',
       }}>
+        {/* XP fill */}
         <div style={{
           height: '100%',
           width: `${Math.min(100, Math.round(((overallXpInLevel ?? 0) / (overallXpNeeded ?? 500)) * 100))}%`,
-          background: 'linear-gradient(180deg, #9060d0 0%, #5030a0 60%, #3a1880 100%)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 0 8px rgba(120,60,200,0.4)',
+          background: 'linear-gradient(180deg, #b080ff 0%, #7040c8 40%, #4a20a0 70%, #301078 100%)',
+          boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.4), 0 0 12px rgba(140,70,240,0.5)',
           transition: 'width 0.7s ease',
         }} />
+        {/* Overlay text centered in bar */}
         <div style={{
           position: 'absolute', inset: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '8px', color: 'rgba(200,180,255,0.6)',
-          fontFamily: "'Cinzel', serif", letterSpacing: '1px', pointerEvents: 'none',
+          fontSize: '10px', color: 'rgba(230,210,255,0.9)',
+          fontFamily: "'Cinzel', serif", letterSpacing: '1.5px',
+          textShadow: '0 0 3px #000, 0 1px 3px #000',
+          pointerEvents: 'none',
         }}>
-          XP {overallXpInLevel ?? 0} / {overallXpNeeded ?? 500}
+          Lv.{overallLevel} &nbsp;·&nbsp; {overallXpInLevel ?? 0} / {overallXpNeeded ?? 500} XP
         </div>
       </div>
 

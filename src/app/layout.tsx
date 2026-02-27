@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ConvexClientProvider>
           {/* Pad bottom so content isn't hidden under fixed nav bar (72px bar height) */}
-          <div style={{ paddingBottom: "66px" }}>
+          <div style={{ paddingBottom: "80px" }}>
             {children}
           </div>
           {/* Fixed bottom nav — anchored to visual viewport, always above Safari toolbar */}
