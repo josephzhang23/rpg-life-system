@@ -647,7 +647,7 @@ export default function Dashboard() {
                   return (
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                        <span style={{ fontSize: '10px', color: 'rgba(200,160,80,0.5)', fontFamily: "'Noto Serif SC', serif" }}>Boss HP</span>
+                        <span style={{ fontSize: '10px', color: 'rgba(200,160,80,0.8)', fontFamily: "'Noto Serif SC', serif" }}>Boss HP</span>
                         <span style={{
                           fontSize: '11px', fontFamily: "'Cinzel', serif", fontWeight: 700,
                           color: bossHpPct <= 5 ? '#ff3030' : bossHpPct <= 20 ? '#e08020' : 'rgba(232,213,163,0.7)',
@@ -676,11 +676,11 @@ export default function Dashboard() {
                       </div>
                       {/* Numbers */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px' }}>
-                        <span style={{ fontSize: '11px', color: 'rgba(232,213,163,0.5)', fontFamily: "'Cinzel', serif" }}>
+                        <span style={{ fontSize: '11px', color: 'rgba(232,213,163,0.9)', fontFamily: "'Cinzel', serif" }}>
                           ${activeBoss.current_value.toLocaleString()}
-                          <span style={{ color: 'rgba(200,160,80,0.3)' }}> / ${activeBoss.target_value.toLocaleString()}</span>
+                          <span style={{ color: 'rgba(200,160,80,0.6)' }}> / ${activeBoss.target_value.toLocaleString()}</span>
                         </span>
-                        <span style={{ fontSize: '11px', color: 'rgba(232,213,163,0.4)', fontFamily: "'Noto Serif SC', serif" }}>
+                        <span style={{ fontSize: '11px', color: 'rgba(232,213,163,0.8)', fontFamily: "'Noto Serif SC', serif" }}>
                           差 <span style={{ color: '#f0a060', fontWeight: 700 }}>${(activeBoss.target_value - activeBoss.current_value).toLocaleString()}</span> 击杀
                         </span>
                       </div>
@@ -697,7 +697,7 @@ export default function Dashboard() {
                   <div style={{
                     marginTop: '8px',
                     fontSize: '11px',
-                    color: 'rgba(232,213,163,0.6)',
+                    color: 'rgba(232,213,163,0.85)',
                     fontFamily: "'Noto Serif SC', serif",
                     lineHeight: 1.5,
                   }}>{activeBoss.objective}</div>
