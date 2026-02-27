@@ -617,51 +617,32 @@ export default function Dashboard() {
               </div>
 
               {/* Boss Encounter Area */}
-              <div style={{ padding: '12px 14px', position: 'relative', zIndex: 1 }}>
-                {/* Boss portrait row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                  <div style={{
-                    width: 38, height: 38, borderRadius: '2px', flexShrink: 0,
-                    background: 'linear-gradient(135deg, rgba(60,10,10,0.9), rgba(20,5,5,0.95))',
-                    border: '1px solid rgba(150,50,20,0.5)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '20px',
-                  }}>💀</div>
-                  <div>
-                    <div style={{
-                      fontFamily: "'Cinzel', serif", fontSize: '13px',
-                      color: '#e8c880', fontWeight: 700, letterSpacing: '0.5px', lineHeight: 1.2,
-                    }}>{activeBoss.name}</div>
-                    <div style={{
-                      fontFamily: "'Noto Serif SC', serif", fontSize: '10px',
-                      color: 'rgba(200,130,60,0.5)', marginTop: '2px',
-                    }}>精英首领 · 必须击败</div>
-                  </div>
-                </div>
-
-                {/* Boss HP Bar (inverted — shows remaining HP) */}
+              <div style={{ padding: '14px 16px', position: 'relative', zIndex: 1 }}>
                 {activeBoss.current_value != null && activeBoss.target_value != null ? (() => {
                   const progressPct = Math.min(100, Math.round((activeBoss.current_value / activeBoss.target_value) * 100));
                   const bossHpPct = Math.max(0, 100 - progressPct);
                   const hpColor = bossHpPct > 50 ? '#20c050' : bossHpPct > 20 ? '#c8a020' : '#e03020';
                   return (
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                        <span style={{ fontSize: '10px', color: 'rgba(200,160,80,0.8)', fontFamily: "'Noto Serif SC', serif" }}>Boss HP</span>
+                    <>
+                      {/* MRR Numbers — primary focus */}
+                      <div style={{ marginBottom: '10px' }}>
                         <span style={{
-                          fontSize: '11px', fontFamily: "'Cinzel', serif", fontWeight: 700,
-                          color: bossHpPct <= 5 ? '#ff3030' : bossHpPct <= 20 ? '#e08020' : 'rgba(232,213,163,0.7)',
-                        }}>
-                          {bossHpPct === 0 ? '⚡ DEFEATED' : `${bossHpPct}%`}
-                        </span>
+                          fontFamily: "'Cinzel', serif", fontSize: '26px', fontWeight: 700,
+                          color: '#f0d060', lineHeight: 1,
+                          textShadow: '0 0 12px rgba(240,180,40,0.4)',
+                        }}>${activeBoss.current_value.toLocaleString()}</span>
+                        <span style={{
+                          fontFamily: "'Cinzel', serif", fontSize: '14px',
+                          color: 'rgba(200,160,80,0.6)', marginLeft: '6px',
+                        }}>/ ${activeBoss.target_value.toLocaleString()}</span>
                       </div>
-                      {/* HP track */}
+
+                      {/* HP bar */}
                       <div style={{
-                        height: '11px', background: 'rgba(0,0,0,0.55)',
+                        height: '10px', background: 'rgba(0,0,0,0.55)',
                         borderRadius: '1px', border: '1px solid rgba(80,40,10,0.5)',
-                        overflow: 'hidden', position: 'relative',
+                        overflow: 'hidden', position: 'relative', marginBottom: '10px',
                       }}>
-                        {/* WoW segment dividers */}
                         <div style={{
                           position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
                           backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 23px, rgba(0,0,0,0.35) 23px, rgba(0,0,0,0.35) 24px)',
@@ -670,51 +651,29 @@ export default function Dashboard() {
                           height: '100%', width: `${bossHpPct}%`,
                           background: `linear-gradient(90deg, ${hpColor}90, ${hpColor})`,
                           boxShadow: `0 0 8px ${hpColor}70`,
-                          transition: 'width 0.8s ease, background 0.5s ease',
-                          borderRadius: '1px',
+                          transition: 'width 0.8s ease',
                         }} />
                       </div>
-                      {/* Numbers */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px' }}>
-                        <span style={{ fontSize: '11px', color: 'rgba(232,213,163,0.9)', fontFamily: "'Cinzel', serif" }}>
-                          ${activeBoss.current_value.toLocaleString()}
-                          <span style={{ color: 'rgba(200,160,80,0.6)' }}> / ${activeBoss.target_value.toLocaleString()}</span>
-                        </span>
-                        <span style={{ fontSize: '11px', color: 'rgba(232,213,163,0.8)', fontFamily: "'Noto Serif SC', serif" }}>
-                          差 <span style={{ color: '#f0a060', fontWeight: 700 }}>${(activeBoss.target_value - activeBoss.current_value).toLocaleString()}</span> 击杀
-                        </span>
+
+                      {/* Bottom row: boss name + HP% + reward */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{
+                          fontFamily: "'Cinzel', serif", fontSize: '11px',
+                          color: 'rgba(232,213,163,0.5)', letterSpacing: '0.5px',
+                        }}>💀 {activeBoss.name}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span style={{
+                            fontSize: '11px', fontFamily: "'Cinzel', serif", fontWeight: 700,
+                            color: bossHpPct <= 5 ? '#ff3030' : bossHpPct <= 20 ? '#e08020' : 'rgba(200,160,80,0.7)',
+                          }}>{bossHpPct === 0 ? '⚡ DEFEATED' : `${bossHpPct}% HP`}</span>
+                          <span style={{ fontSize: '11px', color: '#f0c060', fontFamily: "'Cinzel', serif" }}>
+                            🏆 +{activeBoss.xp_reward} XP
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    </>
                   );
-                })() : (
-                  <div style={{ height: '11px', background: 'rgba(0,0,0,0.4)', borderRadius: '1px', border: '1px solid rgba(80,40,10,0.3)' }}>
-                    <div style={{ height: '100%', width: '0%', background: '#20c050', borderRadius: '1px' }} />
-                  </div>
-                )}
-
-                {/* Objective */}
-                {activeBoss.objective && (
-                  <div style={{
-                    marginTop: '8px',
-                    fontSize: '11px',
-                    color: 'rgba(232,213,163,0.85)',
-                    fontFamily: "'Noto Serif SC', serif",
-                    lineHeight: 1.5,
-                  }}>{activeBoss.objective}</div>
-                )}
-
-                {/* Reward strip */}
-                <div style={{
-                  marginTop: '10px', paddingTop: '8px',
-                  borderTop: '1px solid rgba(100,70,20,0.2)',
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                }}>
-                  <span style={{ fontSize: '13px' }}>🏆</span>
-                  <span style={{ fontSize: '11px', color: 'rgba(232,213,163,0.4)', fontFamily: "'Noto Serif SC', serif" }}>通关奖励：</span>
-                  <span style={{ fontSize: '11px', color: '#f0c060', fontWeight: 700, fontFamily: "'Cinzel', serif" }}>
-                    +{activeBoss.xp_reward} {STAT_META[activeBoss.stat]?.zh ?? activeBoss.stat} XP
-                  </span>
-                </div>
+                })() : null}
               </div>
             </div>
           ) : (
