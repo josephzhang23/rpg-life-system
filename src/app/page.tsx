@@ -454,45 +454,60 @@ export default function Dashboard() {
           {/* Right: 3 rows stacked, space-between */}
           <div className="flex-1 min-w-0 flex flex-col justify-between" style={{ gap: '6px' }}>
 
-            {/* Row 1: Name */}
-            <h1
-              style={{
-                fontFamily: "'Cinzel', serif",
-                color: '#f0c060',
-                fontSize: '18px',
-                letterSpacing: '2px',
-                lineHeight: 1.2,
-                wordBreak: 'break-word',
-                margin: 0,
-              }}
-            >
-              {character.name.toUpperCase()}
-            </h1>
-
-            {/* Row 2: Class badge + Level */}
-            <div className="flex items-center justify-between">
-              <span
-                className="px-2 py-[2px] text-[11px] tracking-[1px] rounded-sm"
+            {/* Row 1: Name + Level */}
+            <div className="flex items-baseline justify-between gap-2">
+              <h1
                 style={{
-                  background: 'rgba(120,60,200,0.2)',
-                  border: '1px solid rgba(120,60,200,0.4)',
-                  color: '#c090ff',
-                  fontFamily: "'Noto Serif SC', serif",
+                  fontFamily: "'Cinzel', serif",
+                  color: '#f0c060',
+                  fontSize: '18px',
+                  letterSpacing: '2px',
+                  lineHeight: 1.2,
+                  margin: 0,
                 }}
               >
-                ⚡ 创始人
+                {character.name.toUpperCase()}
+              </h1>
+              <span style={{ fontFamily: "'Cinzel', serif", fontSize: '12px', color: 'rgba(200,160,50,0.6)', flexShrink: 0 }}>
+                Lv.{overallLevel}
               </span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-[10px] tracking-widest"
-                  style={{ color: 'rgba(200,160,50,0.45)', fontFamily: "'Noto Serif SC', serif" }}>
-                  总等级
-                </span>
-                <span className="text-3xl leading-none"
-                  style={{ color: '#f0c060', fontFamily: "'Cinzel', serif" }}>
-                  {overallLevel}
-                </span>
-              </div>
             </div>
+
+            {/* Row 2: HP bar (red) */}
+            {(() => {
+              const strStat = (stats ?? []).find((s: any) => s.stat_id === 'STR');
+              const strDisplay = Math.floor(Math.sqrt((strStat?.total_xp ?? 0)) * 3);
+              const maxHp = 100 + strDisplay * 10;
+              return (
+                <div className="flex items-center gap-2">
+                  <span style={{ fontSize: '10px', color: '#ff6060', fontFamily: "'Cinzel', serif", width: '12px', textAlign: 'center' }}>♥</span>
+                  <div className="flex-1 h-[8px] rounded-sm overflow-hidden" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(180,30,30,0.4)' }}>
+                    <div className="h-full rounded-sm" style={{ width: '100%', background: 'linear-gradient(90deg, #8b0000, #cc2020)', boxShadow: '0 0 6px rgba(200,30,30,0.5)' }} />
+                  </div>
+                  <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: 'rgba(255,120,120,0.8)', flexShrink: 0, minWidth: '60px', textAlign: 'right' }}>
+                    {maxHp} / {maxHp}
+                  </span>
+                </div>
+              );
+            })()}
+
+            {/* Row 3: Mana bar (blue) */}
+            {(() => {
+              const intStat = (stats ?? []).find((s: any) => s.stat_id === 'INT');
+              const intDisplay = Math.floor(Math.sqrt((intStat?.total_xp ?? 0)) * 3);
+              const maxMana = 100 + intDisplay * 10;
+              return (
+                <div className="flex items-center gap-2">
+                  <span style={{ fontSize: '10px', color: '#4080ff', fontFamily: "'Cinzel', serif", width: '12px', textAlign: 'center' }}>◆</span>
+                  <div className="flex-1 h-[8px] rounded-sm overflow-hidden" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(30,60,180,0.4)' }}>
+                    <div className="h-full rounded-sm" style={{ width: '100%', background: 'linear-gradient(90deg, #000080, #2060cc)', boxShadow: '0 0 6px rgba(30,80,220,0.5)' }} />
+                  </div>
+                  <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: 'rgba(100,160,255,0.8)', flexShrink: 0, minWidth: '60px', textAlign: 'right' }}>
+                    {maxMana} / {maxMana}
+                  </span>
+                </div>
+              );
+            })()}
 
             {/* Row 3: XP bar */}
             <div>
