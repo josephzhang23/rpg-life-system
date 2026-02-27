@@ -484,7 +484,7 @@ export default function Dashboard() {
                   textShadow: '0 0 2px #000, 0 1px 2px #000',
                   letterSpacing: '0.3px', lineHeight: 1,
                 }}>
-                  {maxHp} / {maxHp}
+                  {maxHp}
                 </span>
               </div>
 
@@ -508,7 +508,7 @@ export default function Dashboard() {
                   textShadow: '0 0 2px #000, 0 1px 2px #000',
                   letterSpacing: '0.3px', lineHeight: 1,
                 }}>
-                  {maxMana} / {maxMana}
+                  {maxMana}
                 </span>
               </div>
             </div>
