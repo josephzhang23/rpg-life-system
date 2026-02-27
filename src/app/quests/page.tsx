@@ -1,9 +1,11 @@
 "use client";
+export const dynamic = 'force-dynamic';
 
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const STAT_META: Record<string, { zh: string; color: string; bg: string }> = {
   INT:  { zh: "智力", color: "#60a0ff", bg: "rgba(96,160,255,0.15)" },
@@ -237,11 +239,14 @@ function enrichQuest(q: any) {
   };
 }
 
-export default function QuestLog() {
+function QuestLogInner() {
   const quests = useQuery(api.character.getAllQuests);
   const [selected, setSelected] = useState<any>(null);
   const [showDetail, setShowDetail] = useState(false); // mobile: toggle between list/detail
   const [autoSelected, setAutoSelected] = useState(false);
+  const searchParams = useSearchParams();
+  const questRouter = useRouter();
+  const statFilter = searchParams.get('stat');
 
   // Auto-select quest from ?q= param
   useEffect(() => {
@@ -285,7 +290,8 @@ export default function QuestLog() {
   const virtualTemplates = DAILY_QUEST_TEMPLATES
     .filter(t => !completedNamesSet.has(t.name))
     .map(t => ({ ...t, completed: false, date: today, is_boss: false, is_penalty: false, _virtual: true }));
-  const allQuests = [...(quests ?? []), ...virtualTemplates];
+  const allQuestsRaw = [...(quests ?? []), ...virtualTemplates];
+  const allQuests = statFilter ? allQuestsRaw.filter((q: any) => q.stat === statFilter) : allQuestsRaw;
 
   const groups = groupQuests(allQuests);
   const total = allQuests.filter((q: any) => !q.is_boss).length;
@@ -324,7 +330,15 @@ export default function QuestLog() {
             {completed}/{total}
           </span>
         </div>
-        <div style={{ minWidth: '60px' }} />
+        {statFilter ? (
+          <button
+            onClick={() => questRouter.push('/quests')}
+            className="flex items-center gap-1 px-2 py-1 rounded-sm text-[11px]"
+            style={{ background: 'rgba(200,160,50,0.15)', border: '1px solid rgba(200,160,50,0.4)', color: '#f0c060', cursor: 'pointer' }}
+          >
+            {STAT_META[statFilter]?.zh ?? statFilter} ✕
+          </button>
+        ) : <div style={{ minWidth: '60px' }} />}
       </div>
 
       {/* ── Body ── */}
@@ -418,5 +432,13 @@ export default function QuestLog() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function QuestLog() {
+  return (
+    <Suspense fallback={<div style={{ color: "rgba(200,160,50,0.4)", padding: "2rem", textAlign: "center", fontFamily: "Cinzel" }}>Loading...</div>}>
+      <QuestLogInner />
+    </Suspense>
   );
 }

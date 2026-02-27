@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 /* ── Stat metadata with Chinese names ── */
 const STAT_META: Record<string, {
@@ -245,9 +246,9 @@ export default function Dashboard() {
   const initCharacter     = useMutation(api.character.initCharacter);
   const logCompletedQuest = useMutation(api.character.logCompletedQuest);
 
+  const router = useRouter();
   const [seeding, setSeeding]       = useState(false);
   const [levelUpMsg, setLevelUpMsg] = useState<string | null>(null);
-  const [selectedStat, setSelectedStat] = useState<string | null>(null);
 
   // ── Floating Combat Text ──
   interface FloatItem { id: number; xp: number; zh: string; color: string; x: number; y: number }
@@ -521,7 +522,7 @@ export default function Dashboard() {
         <div className="panel">
           <div className="panel-title">📊 角色属性</div>
           {(stats ?? []).map((s: any) => (
-            <StatValue key={s.stat_id} stat={s.stat_id} value={s.total_xp ?? 0} bonus={equipmentBonuses?.[s.stat_id] ?? 0} onClick={() => setSelectedStat(s.stat_id)} />
+            <StatValue key={s.stat_id} stat={s.stat_id} value={s.total_xp ?? 0} bonus={equipmentBonuses?.[s.stat_id] ?? 0} onClick={() => router.push(`/quests?stat=${s.stat_id}`)} />
           ))}
         </div>
 
@@ -847,76 +848,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stat Quest Drawer */}
-      {selectedStat && (() => {
-        const meta = STAT_META[selectedStat];
-        const statQuests = [
-          ...(questsToday ?? []).filter((q: any) => q.stat === selectedStat),
-          ...(pendingGoals ?? []).filter((q: any) => q.stat === selectedStat && !(questsToday ?? []).find((x: any) => x._id === q._id)),
-        ].sort((a, b) => (b.completed ? 1 : 0) - (a.completed ? 1 : 0) || b._creationTime - a._creationTime);
-        return (
-          <>
-            {/* Backdrop */}
-            <div
-              className="fixed inset-0 z-40"
-              style={{ background: 'rgba(0,0,0,0.5)' }}
-              onClick={() => setSelectedStat(null)}
-            />
-            {/* Drawer */}
-            <div className="fixed left-0 right-0 z-50 rounded-t-lg overflow-hidden"
-              style={{
-                bottom: '58px',
-                background: 'linear-gradient(180deg, rgba(18,10,4,0.98) 0%, rgba(10,6,2,0.99) 100%)',
-                border: '1px solid rgba(200,160,50,0.25)',
-                borderBottom: '1px solid rgba(200,160,50,0.1)',
-                maxHeight: 'calc(70vh - 58px)',
-                display: 'flex', flexDirection: 'column',
-              }}>
-              {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 flex-shrink-0"
-                style={{ borderBottom: '1px solid rgba(200,160,50,0.15)' }}>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{meta.icon}</span>
-                  <span style={{ fontFamily: "'Noto Serif SC', serif", color: '#d4b87a', fontWeight: 700, fontSize: '14px' }}>{meta.zh}</span>
-                  <span style={{ fontFamily: "'Cinzel', serif", color: meta.color, fontSize: '11px', opacity: 0.7 }}>— {selectedStat}</span>
-                </div>
-                <button onClick={() => setSelectedStat(null)}
-                  style={{ color: 'rgba(200,160,50,0.4)', fontSize: '18px', lineHeight: 1, background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
-              </div>
-              {/* Quest list */}
-              <div className="overflow-y-auto flex-1 px-4 py-2">
-                {statQuests.length === 0 ? (
-                  <div className="py-6 text-center" style={{ color: 'rgba(200,160,50,0.3)', fontFamily: "'Noto Serif SC', serif", fontSize: '13px' }}>
-                    暂无记录
-                  </div>
-                ) : statQuests.map((q: any) => (
-                  <div key={q._id ?? q.name} className="py-3 border-b last:border-0"
-                    style={{ borderColor: 'rgba(200,160,50,0.08)' }}>
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span style={{ fontSize: '12px', color: q.completed ? '#60d060' : 'rgba(200,160,50,0.4)' }}>
-                          {q.completed ? '✓' : '○'}
-                        </span>
-                        <span style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '13px', color: q.completed ? 'rgba(232,213,163,0.85)' : 'rgba(232,213,163,0.45)' }}>
-                          {q.name}
-                        </span>
-                      </div>
-                      <span style={{ fontFamily: "'Cinzel', serif", fontSize: '12px', fontWeight: 700, color: q.is_penalty ? '#f06060' : meta.color, flexShrink: 0 }}>
-                        {q.is_penalty ? '-' : '+'}{q.xp_reward} XP
-                      </span>
-                    </div>
-                    {q.note && (
-                      <div style={{ marginTop: '4px', marginLeft: '20px', fontSize: '11px', color: 'rgba(200,160,80,0.45)', fontFamily: "'Noto Serif SC', serif" }}>
-                        {q.note}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        );
-      })()}
+
 
     </div>
   );
