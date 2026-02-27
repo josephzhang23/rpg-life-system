@@ -692,6 +692,17 @@ export default function Dashboard() {
                   </div>
                 )}
 
+                {/* Objective */}
+                {activeBoss.objective && (
+                  <div style={{
+                    marginTop: '8px',
+                    fontSize: '11px',
+                    color: 'rgba(232,213,163,0.6)',
+                    fontFamily: "'Noto Serif SC', serif",
+                    lineHeight: 1.5,
+                  }}>{activeBoss.objective}</div>
+                )}
+
                 {/* Reward strip */}
                 <div style={{
                   marginTop: '10px', paddingTop: '8px',
