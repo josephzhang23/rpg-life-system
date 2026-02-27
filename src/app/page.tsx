@@ -863,12 +863,13 @@ export default function Dashboard() {
               onClick={() => setSelectedStat(null)}
             />
             {/* Drawer */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-lg overflow-hidden"
+            <div className="fixed left-0 right-0 z-50 rounded-t-lg overflow-hidden"
               style={{
+                bottom: '58px',
                 background: 'linear-gradient(180deg, rgba(18,10,4,0.98) 0%, rgba(10,6,2,0.99) 100%)',
                 border: '1px solid rgba(200,160,50,0.25)',
-                borderBottom: 'none',
-                maxHeight: '70vh',
+                borderBottom: '1px solid rgba(200,160,50,0.1)',
+                maxHeight: 'calc(70vh - 58px)',
                 display: 'flex', flexDirection: 'column',
               }}>
               {/* Header */}
