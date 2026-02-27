@@ -464,41 +464,51 @@ export default function Dashboard() {
                 color: '#f0d060', fontWeight: 700, letterSpacing: '1px', lineHeight: 1,
               }}>{character.name} <span style={{ color: 'rgba(200,160,50,0.5)', fontSize: '10px' }}>Lv.{overallLevel}</span></div>
 
-              {/* HP bar (green) */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {/* HP bar (green) — number centered inside bar */}
+              <div style={{
+                position: 'relative', height: '12px',
+                background: 'rgba(0,0,0,0.7)',
+                border: '1px solid rgba(0,80,0,0.8)',
+                borderRadius: '1px', overflow: 'hidden',
+              }}>
                 <div style={{
-                  flex: 1, height: '9px',
-                  background: 'rgba(0,0,0,0.7)',
-                  border: '1px solid rgba(0,80,0,0.8)',
-                  borderRadius: '1px', overflow: 'hidden',
+                  height: '100%', width: '100%',
+                  background: 'linear-gradient(180deg, #00c040 0%, #008030 60%, #006020 100%)',
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)',
+                }} />
+                <span style={{
+                  position: 'absolute', inset: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '8px', fontFamily: "'Cinzel', serif",
+                  color: 'rgba(255,255,255,0.85)',
+                  textShadow: '0 0 2px #000, 0 1px 2px #000',
+                  letterSpacing: '0.3px', lineHeight: 1,
                 }}>
-                  <div style={{
-                    height: '100%', width: '100%',
-                    background: 'linear-gradient(180deg, #00c040 0%, #008030 60%, #006020 100%)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)',
-                  }} />
-                </div>
-                <span style={{ fontSize: '9px', color: 'rgba(120,220,120,0.7)', fontFamily: "'Cinzel', serif", whiteSpace: 'nowrap', minWidth: '28px', textAlign: 'right' }}>
-                  {maxHp}
+                  {maxHp} / {maxHp}
                 </span>
               </div>
 
-              {/* Mana bar (blue) */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {/* Mana bar (blue) — number centered inside bar */}
+              <div style={{
+                position: 'relative', height: '12px',
+                background: 'rgba(0,0,0,0.7)',
+                border: '1px solid rgba(0,40,120,0.8)',
+                borderRadius: '1px', overflow: 'hidden',
+              }}>
                 <div style={{
-                  flex: 1, height: '9px',
-                  background: 'rgba(0,0,0,0.7)',
-                  border: '1px solid rgba(0,40,120,0.8)',
-                  borderRadius: '1px', overflow: 'hidden',
+                  height: '100%', width: '100%',
+                  background: 'linear-gradient(180deg, #2080ff 0%, #1050c0 60%, #0030a0 100%)',
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)',
+                }} />
+                <span style={{
+                  position: 'absolute', inset: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '8px', fontFamily: "'Cinzel', serif",
+                  color: 'rgba(255,255,255,0.85)',
+                  textShadow: '0 0 2px #000, 0 1px 2px #000',
+                  letterSpacing: '0.3px', lineHeight: 1,
                 }}>
-                  <div style={{
-                    height: '100%', width: '100%',
-                    background: 'linear-gradient(180deg, #2080ff 0%, #1050c0 60%, #0030a0 100%)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)',
-                  }} />
-                </div>
-                <span style={{ fontSize: '9px', color: 'rgba(100,160,255,0.7)', fontFamily: "'Cinzel', serif", whiteSpace: 'nowrap', minWidth: '28px', textAlign: 'right' }}>
-                  {maxMana}
+                  {maxMana} / {maxMana}
                 </span>
               </div>
             </div>
