@@ -562,11 +562,20 @@ export default function Dashboard() {
               borderRadius: '2px',
               position: 'relative',
               overflow: 'hidden',
+              backgroundImage: 'url(/ragefire-chasm.jpg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}>
+              {/* Dark overlay for readability */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(180deg, rgba(5,2,10,0.82) 0%, rgba(15,6,3,0.78) 100%)',
+                pointerEvents: 'none', zIndex: 0,
+              }} />
               {/* Stone texture scanlines */}
               <div style={{
                 position: 'absolute', inset: 0,
-                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.008) 3px, rgba(255,255,255,0.008) 4px)',
+                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px)',
                 pointerEvents: 'none', zIndex: 0,
               }} />
 
