@@ -141,7 +141,7 @@ function QuestRow({ quest, completed, onComplete, indent }: {
           textDecoration: 'none',
         }}
       >
-        {quest.name}
+        {quest.name.replace(/^💀\s*/, '')}
       </Link>
 
       <span

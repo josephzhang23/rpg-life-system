@@ -93,7 +93,7 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
         {/* ── Title ── */}
         <h2 className="text-xl font-bold leading-snug mb-2"
           style={{ fontFamily: "'Noto Serif SC', serif", color: '#f0e0b0', textShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
-          {quest.name}
+          {quest.is_penalty ? '💀 ' : ''}{quest.name.replace(/^💀\s*/, '')}
         </h2>
 
         {/* ── Objective ── */}
@@ -385,7 +385,7 @@ function QuestLogInner() {
                         color: q.completed ? 'rgba(200,170,100,0.35)' : q.is_penalty ? 'rgba(255,120,100,0.9)' : '#d4b87a',
                         textDecoration: q.completed ? 'line-through' : 'none',
                       }}>
-                      {q.is_penalty ? '💀 ' : ''}{q.name}
+                      {q.is_penalty ? '💀 ' : ''}{q.name.replace(/^💀\s*/, '')}
                     </span>
                     {q.completed && <span style={{ color: q.is_penalty ? '#ff6060' : '#40c060', fontSize: '13px' }}>{q.is_penalty ? '✗' : '✓'}</span>}
                     {/* Arrow hint on mobile */}
