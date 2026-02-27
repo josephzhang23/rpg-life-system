@@ -40,6 +40,7 @@ export default defineSchema({
     deadline: v.optional(v.string()),
     current_value: v.optional(v.number()),
     target_value: v.optional(v.number()),
+    dungeon: v.optional(v.string()),            // boss fight: dungeon name (e.g. "Ragefire Chasm")
   }),
   quest_catalog: defineTable({
     name: v.string(),

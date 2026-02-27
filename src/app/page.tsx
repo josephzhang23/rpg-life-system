@@ -584,10 +584,10 @@ export default function Dashboard() {
                   display: 'inline-block', flexShrink: 0,
                 }} />
                 <span style={{
-                  fontFamily: "'Noto Serif SC', serif", fontSize: '11px',
+                  fontFamily: "'Cinzel', serif", fontSize: '11px',
                   letterSpacing: '2px', color: '#ff8060',
                   textTransform: 'uppercase', fontWeight: 700,
-                }}>副本进行中</span>
+                }}>{activeBoss.dungeon ?? '副本进行中'}</span>
                 <span style={{
                   fontSize: '10px', color: 'rgba(200,160,100,0.5)',
                   fontFamily: "'Cinzel', serif", letterSpacing: '1px',
