@@ -405,13 +405,20 @@ export const logCompletedQuest = mutation({
   },
   handler: async (ctx, args) => {
     const today = args.date ?? todayISO();
-    const existing = (await ctx.db.query("quests").collect()).find(
-      (q: any) => q.name === args.name && q.date === today && !q.is_boss
+    const allQuests = await ctx.db.query("quests").collect();
+    // First: find any uncompleted quest with same name (cross-day pre-added quests)
+    const pending = allQuests.find(
+      (q: any) => q.name === args.name && !q.completed && !q.is_boss
     );
+    // Second: find completed quest with same name today (duplicate check)
+    const completedToday = allQuests.find(
+      (q: any) => q.name === args.name && q.completed && q.date === today && !q.is_boss
+    );
+    const existing = pending ?? completedToday ?? null;
     if (existing) {
       if (existing.completed) return { ok: true, duplicate: true };
-      // Was pre-inserted uncompleted — patch it
-      await ctx.db.patch(existing._id, { completed: true, note: args.note });
+      // Was pre-inserted uncompleted — patch it, update date to today
+      await ctx.db.patch(existing._id, { completed: true, note: args.note, date: today });
     } else {
       await ctx.db.insert("quests", {
         name: args.name,
