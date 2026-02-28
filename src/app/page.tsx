@@ -334,14 +334,7 @@ export default function Dashboard() {
   }, [logCompletedQuest, data]);
 
   const handleCompleteAdHoc = useCallback(async (quest: any) => {
-    const result = await logCompletedQuest({
-      name: quest.name,
-      stat: quest.stat,
-      xp_reward: quest.xp_reward,
-      objective: quest.objective ?? '',
-      description: quest.description ?? '',
-      is_penalty: quest.is_penalty ?? false,
-    });
+    const result = await markQuestCompleted({ questId: quest._id });
     if (result && result.xpResult) {
       const { xpResult } = result;
       const oldOverallLevel = data?.overallLevel ?? 1;
@@ -350,7 +343,7 @@ export default function Dashboard() {
         setTimeout(() => setLevelUpMsg(null), 4000);
       }
     }
-  }, [logCompletedQuest, data]);
+  }, [markQuestCompleted, data]);
 
   const handleSeed = async () => {
     setSeeding(true);

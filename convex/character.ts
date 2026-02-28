@@ -593,8 +593,11 @@ export const markQuestCompleted = mutation({
   handler: async (ctx, args) => {
     const quest = await ctx.db.get(args.questId as any);
     if (!quest) throw new Error("Quest not found");
+    if ((quest as any).completed) return { ok: true, duplicate: true };
     await ctx.db.patch(quest._id, { completed: true, date: todayISO() });
-    return { ok: true };
+    const xpAmount = (quest as any).is_penalty ? -Math.abs((quest as any).xp_reward) : (quest as any).xp_reward;
+    const xpResult = await applyXpToStat(ctx, (quest as any).stat, xpAmount);
+    return { ok: true, xpResult };
   },
 });
 
