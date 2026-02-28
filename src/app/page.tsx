@@ -24,12 +24,6 @@ const STAT_META: Record<string, {
   CRE:  { label: "CRE",  zh: "创造", bar: "bar-cre",  text: "text-cre",  bg: "bg-cre",  icon: "✨", color: "#c060ff" },
 };
 
-const STREAK_META: Record<string, { icon: string; zh: string }> = {
-  daily:     { icon: "📅", zh: "每日" },
-  gym:       { icon: "🏋️", zh: "健身" },
-  deep_work: { icon: "🧠", zh: "专注" },
-  reading:   { icon: "📚", zh: "阅读" },
-};
 
 const DAILY_QUEST_TEMPLATES = [
   { name: "Plan your top 3 priorities", stat: "DISC", xp_reward: 20,
@@ -393,8 +387,7 @@ export default function Dashboard() {
     );
   }
 
-  const { character, stats, streaks, questsToday, pendingGoals, activeBoss, achievements, overallLevel, overallTotalXp, overallXpInLevel, overallXpNeeded, equipmentBonuses, today } = data;
-  const streakMap = Object.fromEntries((streaks ?? []).map((s: any) => [s.type, s.count]));
+  const { character, stats, questsToday, pendingGoals, activeBoss, achievements, overallLevel, overallTotalXp, overallXpInLevel, overallXpNeeded, equipmentBonuses, today } = data;
 
   const todayFormatted = new Date(today + "T00:00:00").toLocaleDateString("zh-CN", { timeZone: 'Asia/Shanghai',
     weekday: "short", month: "long", day: "numeric"
@@ -554,37 +547,6 @@ export default function Dashboard() {
           {(stats ?? []).map((s: any) => (
             <StatValue key={s.stat_id} stat={s.stat_id} value={s.total_xp ?? 0} bonus={equipmentBonuses?.[s.stat_id] ?? 0} onClick={() => router.push(`/quests?stat=${s.stat_id}`)} />
           ))}
-        </div>
-
-        {/* 连续记录 */}
-        <div className="panel">
-          <div className="panel-title">🔥 连续记录</div>
-          <div className="grid grid-cols-4 gap-2">
-            {["daily", "gym", "deep_work", "reading"].map((type) => {
-              const sm = STREAK_META[type];
-              return (
-                <div
-                  key={type}
-                  className="rounded-sm py-3 text-center"
-                  style={{
-                    background: 'rgba(255,255,255,0.02)',
-                    border: '1px solid rgba(200,160,50,0.12)',
-                  }}
-                >
-                  <div className="text-xl">{sm.icon}</div>
-                  <div className="font-cinzel text-2xl leading-tight mt-1" style={{ color: '#f0c060' }}>
-                    {streakMap[type] ?? 0}
-                  </div>
-                  <div
-                    className="text-[10px] mt-1"
-                    style={{ color: 'rgba(200,160,50,0.55)', fontFamily: "'Noto Serif SC', serif" }}
-                  >
-                    {sm.zh}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         </div>
 
         {/* 副本 — full width */}
