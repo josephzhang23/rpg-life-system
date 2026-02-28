@@ -16,12 +16,6 @@ export default defineSchema({
     xp: v.number(),
     total_xp: v.number(),
   }),
-  streaks: defineTable({
-    type: v.string(),
-    label: v.string(),
-    count: v.number(),
-    last_updated: v.optional(v.string()),
-  }),
   quests: defineTable({
     name: v.string(),
     stat: v.string(),

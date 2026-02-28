@@ -110,34 +110,6 @@ export const completeQuest = mutation({
     const xpAmount = quest.is_penalty ? -Math.abs(quest.xp_reward) : quest.xp_reward;
     const xpResult = await applyXpToStat(ctx, quest.stat, xpAmount);
 
-    const streaks = await ctx.db.query("streaks").collect();
-    const daily = streaks.find((s: any) => s.type === "daily");
-    if (daily) {
-      await ctx.db.patch(daily._id, {
-        count: daily.count + 1,
-        last_updated: todayISO(),
-      });
-    }
-
-    // Auto-update specific streaks based on quest name
-    const qname = (quest.name ?? "").toLowerCase();
-    const streakMap: Record<string, string> = {
-      reading: "reading",
-      "read ": "reading",
-      gym: "gym",
-      workout: "gym",
-      "deep work": "deep_work",
-    };
-    for (const [keyword, streakType] of Object.entries(streakMap)) {
-      if (qname.includes(keyword)) {
-        const s = streaks.find((x: any) => x.type === streakType);
-        if (s) {
-          await ctx.db.patch(s._id, { count: s.count + 1, last_updated: todayISO() });
-        }
-        break;
-      }
-    }
-
     const achievement = (await ctx.db.query("achievements").collect()).find(
       (a: any) => a.key === "first_quest",
     );
@@ -155,10 +127,9 @@ export const completeQuest = mutation({
 export const getDashboard = query({
   args: {},
   handler: async (ctx) => {
-    const [character, stats, streaks, achievements, quests, equipment] = await Promise.all([
+    const [character, stats, achievements, quests, equipment] = await Promise.all([
       ctx.db.query("character").collect(),
       ctx.db.query("stats").collect(),
-      ctx.db.query("streaks").collect(),
       ctx.db.query("achievements").collect(),
       ctx.db.query("quests").collect(),
       ctx.db.query("equipment").collect(),
@@ -185,7 +156,6 @@ export const getDashboard = query({
     return {
       character: character[0] ?? null,
       stats: stats.sort((a: any, b: any) => DEFAULT_STATS.indexOf(a.stat_id as any) - DEFAULT_STATS.indexOf(b.stat_id as any)),
-      streaks,
       questsToday,
       pendingGoals,
       activeBoss,
@@ -226,17 +196,6 @@ export const initCharacter = mutation({
         xp: 0,
         total_xp: 0,
       });
-    }
-
-    const streakSeeds = [
-      { type: "daily", label: "Daily", count: 0 },
-      { type: "gym", label: "Gym", count: 0 },
-      { type: "deep_work", label: "Deep Work", count: 0 },
-      { type: "reading", label: "Reading", count: 0 },
-    ];
-
-    for (const streak of streakSeeds) {
-      await ctx.db.insert("streaks", { ...streak, last_updated: undefined });
     }
 
     const questSeeds = [
@@ -472,24 +431,6 @@ export const logCompletedQuest = mutation({
 
     const xpAmount = (args.is_penalty ?? false) ? -Math.abs(args.xp_reward) : args.xp_reward;
     const xpResult = await applyXpToStat(ctx, args.stat, xpAmount);
-
-    // Auto-update specific streaks based on quest name
-    const qname = args.name.toLowerCase();
-    const streakMap: Record<string, string> = {
-      reading: "reading",
-      "read ": "reading",
-      gym: "gym",
-      workout: "gym",
-      "deep work": "deep_work",
-    };
-    const streaks = await ctx.db.query("streaks").collect();
-    for (const [keyword, streakType] of Object.entries(streakMap)) {
-      if (qname.includes(keyword)) {
-        const s = streaks.find((x: any) => x.type === streakType);
-        if (s) await ctx.db.patch(s._id, { count: s.count + 1, last_updated: todayISO() });
-        break;
-      }
-    }
 
     return { ok: true, xpResult };
   },
@@ -854,16 +795,6 @@ export const setQuestType = mutation({
     const quest = await ctx.db.get(args.questId as any);
     if (!quest) throw new Error("Quest not found");
     await ctx.db.patch(quest._id, { quest_type: args.quest_type });
-    return { ok: true };
-  },
-});
-
-export const patchStreak = mutation({
-  args: { type: v.string(), count: v.number() },
-  handler: async (ctx, args) => {
-    const streak = (await ctx.db.query("streaks").collect()).find((s: any) => s.type === args.type);
-    if (!streak) throw new Error("Streak not found: " + args.type);
-    await ctx.db.patch(streak._id, { count: args.count, last_updated: todayISO() });
     return { ok: true };
   },
 });
