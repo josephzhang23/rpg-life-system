@@ -808,3 +808,13 @@ export const deleteQuest = mutation({
     return { ok: true };
   },
 });
+
+export const deleteAchievement = mutation({
+  args: { achievementId: v.string() },
+  handler: async (ctx, args) => {
+    const a = await ctx.db.get(args.achievementId as any);
+    if (!a) throw new Error("Achievement not found");
+    await ctx.db.delete(a._id);
+    return { ok: true };
+  },
+});
