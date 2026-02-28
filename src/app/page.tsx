@@ -246,6 +246,7 @@ export default function Dashboard() {
   const data = useQuery(api.character.getDashboard);
   const initCharacter     = useMutation(api.character.initCharacter);
   const logCompletedQuest = useMutation(api.character.logCompletedQuest);
+  const markQuestCompleted = useMutation(api.character.markQuestCompleted);
 
   const { setXp } = useXp();
   const router = useRouter();
@@ -320,6 +321,25 @@ export default function Dashboard() {
       xp_reward: quest.xp_reward,
       objective: quest.objective,
       description: quest.description,
+      is_penalty: quest.is_penalty ?? false,
+    });
+    if (result && result.xpResult) {
+      const { xpResult } = result;
+      const oldOverallLevel = data?.overallLevel ?? 1;
+      if ((xpResult.overall_level ?? 0) > oldOverallLevel) {
+        setLevelUpMsg(`🎉 人物升级 — Lv.${xpResult.overall_level}`);
+        setTimeout(() => setLevelUpMsg(null), 4000);
+      }
+    }
+  }, [logCompletedQuest, data]);
+
+  const handleCompleteAdHoc = useCallback(async (quest: any) => {
+    const result = await logCompletedQuest({
+      name: quest.name,
+      stat: quest.stat,
+      xp_reward: quest.xp_reward,
+      objective: quest.objective ?? '',
+      description: quest.description ?? '',
       is_penalty: quest.is_penalty ?? false,
     });
     if (result && result.xpResult) {
@@ -797,7 +817,7 @@ export default function Dashboard() {
                   </div>
                   <div style={{ padding: '0 0 6px 0' }}>
                     {mainDone.map((q: any) => <QuestRow key={q._id} quest={q} completed={true} onComplete={() => {}} indent />)}
-                    {main.map((q: any) => <QuestRow key={q._id} quest={q} completed={false} onComplete={() => {}} indent />)}
+                    {main.map((q: any) => <QuestRow key={q._id} quest={q} completed={false} onComplete={handleCompleteAdHoc} indent />)}
                   </div>
                 </>
               );
@@ -825,7 +845,7 @@ export default function Dashboard() {
                   </div>
                   <div style={{ padding: '0 0 6px 0' }}>
                     {adHoc.map((q: any) => <QuestRow key={q._id} quest={q} completed={true} onComplete={() => {}} indent />)}
-                    {side.map((q: any) => <QuestRow key={q._id} quest={q} completed={false} onComplete={() => {}} indent />)}
+                    {side.map((q: any) => <QuestRow key={q._id} quest={q} completed={false} onComplete={handleCompleteAdHoc} indent />)}
                   </div>
                 </>
               );
