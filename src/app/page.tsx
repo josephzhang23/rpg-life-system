@@ -465,9 +465,11 @@ export default function Dashboard() {
               background: 'radial-gradient(circle at 35% 30%, #2a1a05, #0a0805)',
               border: '2px solid #8a6a20',
               boxShadow: 'inset 0 0 8px rgba(0,0,0,0.8)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '20px',
-            }}>⚔️</div>
+              overflow: 'hidden',
+            }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/avatar.jpg" alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
 
             {/* Name + bars */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: '140px' }}>
@@ -475,7 +477,8 @@ export default function Dashboard() {
               <div style={{
                 fontFamily: "'Cinzel', serif", fontSize: '12px',
                 color: '#f0d060', fontWeight: 700, letterSpacing: '1px', lineHeight: 1,
-              }}>{character.name} <span style={{ color: 'rgba(200,160,50,0.5)', fontSize: '10px' }}>Lv.{overallLevel}</span></div>
+                textAlign: 'center',
+              }}>{character.name}</div>
 
               {/* HP bar (green) — number centered inside bar */}
               <div style={{

@@ -593,7 +593,17 @@ export const markQuestCompleted = mutation({
   handler: async (ctx, args) => {
     const quest = await ctx.db.get(args.questId as any);
     if (!quest) throw new Error("Quest not found");
-    await ctx.db.patch(quest._id, { completed: true });
+    await ctx.db.patch(quest._id, { completed: true, date: todayISO() });
+    return { ok: true };
+  },
+});
+
+export const patchQuestDate = mutation({
+  args: { questId: v.string(), date: v.string() },
+  handler: async (ctx, args) => {
+    const quest = await ctx.db.get(args.questId as any);
+    if (!quest) throw new Error("Quest not found");
+    await ctx.db.patch(quest._id, { date: args.date });
     return { ok: true };
   },
 });

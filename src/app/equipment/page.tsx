@@ -238,11 +238,12 @@ export default function EquipmentPage() {
           {/* Portrait */}
           <div style={{
             width: 32, height: 32, borderRadius: "50%",
-            background: "radial-gradient(circle, #3d2a12, #1a1208)",
             border: "1.5px solid #6b4e2a",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "16px", flexShrink: 0,
-          }}>⚔️</div>
+            flexShrink: 0, overflow: "hidden",
+          }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/avatar.jpg" alt="avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          </div>
           {/* Name — truly centered */}
           <div style={{ flex: 1, textAlign: "center" }}>
             <div style={{
