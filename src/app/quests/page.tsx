@@ -232,11 +232,12 @@ function enrichQuest(q: any) {
   const tmpl = DAILY_QUEST_TEMPLATES.find(t => t.name === q.name);
   if (!tmpl) return q;
   return {
-    steps: tmpl.steps,
-    proof_requirement: tmpl.proof_requirement,
-    description: tmpl.description,
-    objective: tmpl.objective,
-    ...q, // DB fields take precedence (note, completed, date, etc.)
+    ...q,
+    // Prefer template values when DB has empty/missing fields
+    steps: (q.steps && q.steps.length > 0) ? q.steps : tmpl.steps,
+    proof_requirement: q.proof_requirement || tmpl.proof_requirement,
+    description: q.description || tmpl.description,
+    objective: q.objective || tmpl.objective,
   };
 }
 
