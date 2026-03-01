@@ -846,3 +846,13 @@ export const patchQuestStat = mutation({
     return { ok: true };
   },
 });
+
+export const unlockAchievement = mutation({
+  args: { key: v.string() },
+  handler: async (ctx, args) => {
+    const a = (await ctx.db.query("achievements").collect()).find((x: any) => x.key === args.key);
+    if (!a) throw new Error(`Achievement ${args.key} not found`);
+    await ctx.db.patch(a._id, { unlocked: true });
+    return { ok: true };
+  },
+});
