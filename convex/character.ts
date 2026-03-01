@@ -773,6 +773,7 @@ export const patchBoss = mutation({
   args: {
     name: v.optional(v.string()),
     dungeon: v.optional(v.string()),
+    boss_character: v.optional(v.string()),
     objective: v.optional(v.string()),
     description: v.optional(v.string()),
     target_value: v.optional(v.number()),
@@ -787,6 +788,7 @@ export const patchBoss = mutation({
     const patch: any = {};
     if (args.name !== undefined) patch.name = args.name;
     if (args.dungeon !== undefined) patch.dungeon = args.dungeon;
+    if (args.boss_character !== undefined) patch.boss_character = args.boss_character;
     if (args.objective !== undefined) patch.objective = args.objective;
     if (args.description !== undefined) patch.description = args.description;
     if (args.target_value !== undefined) patch.target_value = args.target_value;

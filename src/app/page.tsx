@@ -662,7 +662,7 @@ export default function Dashboard() {
                         <span style={{
                           fontFamily: "'Cinzel', serif", fontSize: '11px',
                           color: 'rgba(232,213,163,0.5)', letterSpacing: '0.5px',
-                        }}>💀 {activeBoss.name}</span>
+                        }}>💀 {activeBoss.boss_character ?? activeBoss.name}</span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <span style={{
                             fontSize: '11px', fontFamily: "'Cinzel', serif", fontWeight: 700,
