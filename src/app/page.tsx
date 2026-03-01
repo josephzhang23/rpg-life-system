@@ -21,6 +21,7 @@ const STAT_META: Record<string, {
   DISC: { label: "DISC", zh: "意志", bar: "bar-disc", text: "text-disc", bg: "bg-disc", icon: "⚡", color: "#ff8040" },
   STR:  { label: "STR",  zh: "力量", bar: "bar-str",  text: "text-str",  bg: "bg-str",  icon: "💪", color: "#ff4060" },
   SOC:  { label: "SOC",  zh: "魅力", bar: "bar-soc",  text: "text-soc",  bg: "bg-soc",  icon: "🤝", color: "#40d890" },
+  STA:  { label: "STA",  zh: "耐力", bar: "bar-sta",  text: "text-sta",  bg: "bg-sta",  icon: "🏃", color: "#20c0a0" },
   CRE:  { label: "CRE",  zh: "创造", bar: "bar-cre",  text: "text-cre",  bg: "bg-cre",  icon: "✨", color: "#c060ff" },
 };
 

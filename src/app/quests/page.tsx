@@ -12,6 +12,7 @@ const STAT_META: Record<string, { zh: string; color: string; bg: string }> = {
   DISC: { zh: "意志", color: "#ff8040", bg: "rgba(255,128,64,0.15)" },
   STR:  { zh: "力量", color: "#ff4060", bg: "rgba(255,64,96,0.15)" },
   SOC:  { zh: "魅力", color: "#40d890", bg: "rgba(64,216,144,0.15)" },
+  STA:  { zh: "耐力", color: "#20c0a0", bg: "rgba(32,192,160,0.15)" },
   CRE:  { zh: "创造", color: "#c060ff", bg: "rgba(192,96,255,0.15)" },
 };
 
@@ -71,7 +72,7 @@ function groupQuests(quests: any[]) {
 }
 
 const STAT_ICONS: Record<string, string> = {
-  INT: '🧠', DISC: '⚡', STR: '💪', SOC: '🤝', CRE: '✨',
+  INT: '🧠', DISC: '⚡', STR: '💪', SOC: '🤝', CRE: '✨', STA: '🏃',
 };
 
 function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {

@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 const STAT_NAMES: Record<string, string> = {
+  STA: "Stamina",
   INT: "Intelligence",
   DISC: "Discipline",
   STR: "Strength",
@@ -9,7 +10,7 @@ const STAT_NAMES: Record<string, string> = {
   CRE: "Creativity",
 };
 
-const DEFAULT_STATS = ["INT", "DISC", "STR", "SOC", "CRE"] as const;
+const DEFAULT_STATS = ["INT", "DISC", "STR", "STA", "SOC", "CRE"] as const;
 
 function todayISO() {
   return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
@@ -822,6 +823,26 @@ export const deleteAchievement = mutation({
     const a = await ctx.db.get(args.achievementId as any);
     if (!a) throw new Error("Achievement not found");
     await ctx.db.delete(a._id);
+    return { ok: true };
+  },
+});
+
+export const addStat = mutation({
+  args: { stat_id: v.string(), name: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    const existing = (await ctx.db.query("stats").collect()).find((s: any) => s.stat_id === args.stat_id);
+    if (existing) return { ok: true, reason: "already_exists" };
+    await ctx.db.insert("stats", { stat_id: args.stat_id, level: 1, xp: 0, total_xp: 0, name: args.name ?? args.stat_id });
+    return { ok: true, created: true };
+  },
+});
+
+export const patchQuestStat = mutation({
+  args: { questId: v.string(), stat: v.string() },
+  handler: async (ctx, args) => {
+    const quest = await ctx.db.get(args.questId as any);
+    if (!quest) throw new Error("Quest not found");
+    await ctx.db.patch(quest._id, { stat: args.stat });
     return { ok: true };
   },
 });
