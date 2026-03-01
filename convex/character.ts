@@ -852,7 +852,7 @@ export const unlockAchievement = mutation({
   handler: async (ctx, args) => {
     const a = (await ctx.db.query("achievements").collect()).find((x: any) => x.key === args.key);
     if (!a) throw new Error(`Achievement ${args.key} not found`);
-    await ctx.db.patch(a._id, { unlocked: true });
+    await ctx.db.patch(a._id, { unlocked: true, unlocked_at: todayISO() });
     return { ok: true };
   },
 });
