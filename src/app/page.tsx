@@ -559,7 +559,7 @@ export default function Dashboard() {
               borderRadius: '2px',
               position: 'relative',
               overflow: 'hidden',
-              backgroundImage: `url(${activeBoss.dungeon === '哭嚎洞窟' ? '/wailing-caverns.jpg' : '/ragefire-chasm.jpg'})`,
+              backgroundImage: `url(${activeBoss.dungeon === '哀嚎洞穴' ? '/wailing-caverns.jpg' : activeBoss.dungeon === '死亡矿井' ? '/deadmines.jpg' : '/ragefire-chasm.jpg'})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}>
