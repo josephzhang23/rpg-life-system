@@ -858,3 +858,44 @@ export const unlockAchievement = mutation({
     return { ok: true };
   },
 });
+
+// ── Journals ──────────────────────────────────────────────────────────────────
+
+export const upsertJournal = mutation({
+  args: {
+    date: v.string(),
+    content: v.string(),
+    auto_generated: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    const existing = (await ctx.db.query("journals").collect()).find(
+      (j: any) => j.date === args.date
+    );
+    if (existing) {
+      await ctx.db.patch(existing._id, { content: args.content, auto_generated: args.auto_generated });
+      return { updated: true };
+    }
+    await ctx.db.insert("journals", {
+      date: args.date,
+      content: args.content,
+      auto_generated: args.auto_generated ?? false,
+    });
+    return { created: true };
+  },
+});
+
+export const getJournals = query({
+  args: {},
+  handler: async (ctx) => {
+    const journals = await ctx.db.query("journals").collect();
+    return journals.sort((a: any, b: any) => b.date.localeCompare(a.date));
+  },
+});
+
+export const deleteJournal = mutation({
+  args: { journalId: v.id("journals") },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.journalId);
+    return { ok: true };
+  },
+});

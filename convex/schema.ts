@@ -64,6 +64,11 @@ export default defineSchema({
     stat_bonuses: v.optional(v.array(v.object({ stat: v.string(), value: v.number() }))),
     cooldown: v.optional(v.string()),  // flavor text e.g. "无冷却", "每日"
   }),
+  journals: defineTable({
+    date: v.string(),           // YYYY-MM-DD
+    content: v.string(),        // markdown/plain journal text
+    auto_generated: v.optional(v.boolean()),
+  }),
   equipment: defineTable({
     slot: v.string(),          // e.g. "main_hand"
     slot_zh: v.string(),       // e.g. "主手武器"

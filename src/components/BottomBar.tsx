@@ -10,6 +10,7 @@ const NAV = [
   { href: "/abilities",  icon: "✨", label: "技能" },
   { href: "/quests",     icon: "📖", label: "任务" },
   { href: "/catalog",    icon: "📚", label: "目录" },
+  { href: "/journal",    icon: "📓", label: "日志" },
 ];
 
 export default function BottomBar() {
