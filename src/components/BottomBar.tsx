@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useXp } from "../lib/xpContext";
+import { useEffect, useRef } from "react";
 
 const NAV = [
   { href: "/",           icon: "👤", label: "角色" },
@@ -16,6 +17,11 @@ const NAV = [
 export default function BottomBar() {
   const path = usePathname();
   const { xp } = useXp();
+  const activeRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+  }, [path]);
   const xpPct = Math.min(100, Math.round((xp.xpInLevel / xp.xpNeeded) * 100));
 
   return (
@@ -114,7 +120,7 @@ export default function BottomBar() {
           {NAV.map(n => {
             const active = path === n.href;
             return (
-              <Link key={n.href} href={n.href} style={{ textDecoration: "none" }}>
+              <Link key={n.href} href={n.href} ref={active ? activeRef : undefined} style={{ textDecoration: "none" }}>
                 <div style={{
                   width: 54,
                   height: 54,
