@@ -104,7 +104,7 @@ export default function BottomBar() {
         <div style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           gap: "5px",
           padding: "7px 14px 8px",
           overflowX: "auto",
