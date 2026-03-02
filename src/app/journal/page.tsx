@@ -55,11 +55,11 @@ export default function JournalPage() {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100vh',
+      overflow: 'hidden',
       background: 'linear-gradient(160deg, #0a0610 0%, #0d0a04 50%, #080412 100%)',
       fontFamily: "'Noto Serif SC', serif",
       color: '#e8d5a3',
-      padding: '0 0 80px',
     }}>
       {/* Header */}
       <div style={{
@@ -86,7 +86,7 @@ export default function JournalPage() {
         }}>+ 新记录</button>
       </div>
 
-      <div style={{ display: 'flex', height: 'calc(100vh - 52px)' }}>
+      <div style={{ display: 'flex', height: 'calc(100vh - 52px - 90px)' }}>
         {/* Sidebar — entry list */}
         <div style={{
           width: '160px', flexShrink: 0,
