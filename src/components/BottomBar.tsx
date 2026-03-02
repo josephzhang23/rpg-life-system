@@ -105,16 +105,16 @@ export default function BottomBar() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: "5px",
-          padding: "7px 14px 8px",
+          gap: "3px",
+          padding: "6px 8px 7px",
         }}>
           {NAV.map(n => {
             const active = path === n.href;
             return (
               <Link key={n.href} href={n.href} style={{ textDecoration: "none" }}>
                 <div style={{
-                  width: 54,
-                  height: 54,
+                  width: 48,
+                  height: 48,
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
@@ -154,7 +154,7 @@ export default function BottomBar() {
                       pointerEvents: "none",
                     }} />
                   )}
-                  <span style={{ fontSize: "22px", lineHeight: 1 }}>{n.icon}</span>
+                  <span style={{ fontSize: "20px", lineHeight: 1 }}>{n.icon}</span>
                   <span style={{
                     fontSize: "9px",
                     fontFamily: "'Noto Serif SC', serif",
