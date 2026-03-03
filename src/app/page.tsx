@@ -148,7 +148,7 @@ function QuestRow({ quest, completed, onComplete, indent }: {
           color: isPenalty ? '#ff6060' : meta.color,
         }}
       >
-        {isPenalty ? `-${quest.xp_reward}` : `+${quest.xp_reward}`} {meta.zh}
+        {(isPenalty || quest.xp_reward < 0) ? `-${Math.abs(quest.xp_reward)}` : `+${quest.xp_reward}`} {meta.zh}
       </span>
     </div>
   );
