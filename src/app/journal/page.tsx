@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { useRouter } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 
 function formatDate(d: string) {
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -97,8 +98,23 @@ export default function JournalPage() {
               </div>
               <div style={{ borderTop: '1px solid rgba(180,130,30,0.2)', marginBottom: '20px' }} />
               {selectedJournal ? (
-                <div style={{ fontSize: '14px', lineHeight: '1.9', color: 'rgba(232,213,163,0.85)', whiteSpace: 'pre-wrap' }}>
-                  {selectedJournal.content}
+                <div style={{ fontSize: '14px', lineHeight: '1.9', color: 'rgba(232,213,163,0.85)' }}>
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => <p style={{ marginBottom: '1em' }}>{children}</p>,
+                      img: ({ src, alt }) => (
+                        <img
+                          src={src}
+                          alt={alt ?? ''}
+                          style={{ maxWidth: '100%', borderRadius: '6px', margin: '12px 0', display: 'block' }}
+                        />
+                      ),
+                      strong: ({ children }) => <strong style={{ color: '#f0c060' }}>{children}</strong>,
+                      em: ({ children }) => <em style={{ color: 'rgba(232,213,163,0.7)' }}>{children}</em>,
+                    }}
+                  >
+                    {selectedJournal.content}
+                  </ReactMarkdown>
                 </div>
               ) : (
                 <div style={{ color: 'rgba(200,160,80,0.25)', fontSize: '13px' }}>这一天还没有记录。</div>
