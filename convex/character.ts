@@ -812,6 +812,16 @@ export const setQuestType = mutation({
   },
 });
 
+export const setQuestImage = mutation({
+  args: { questId: v.string(), image_url: v.string() },
+  handler: async (ctx, args) => {
+    const quest = await ctx.db.get(args.questId as any);
+    if (!quest) throw new Error("Quest not found");
+    await ctx.db.patch(quest._id, { image_url: args.image_url });
+    return { ok: true };
+  },
+});
+
 export const setQuestPenalty = mutation({
   args: { questId: v.string(), is_penalty: v.boolean() },
   handler: async (ctx, args) => {

@@ -27,6 +27,7 @@ export default defineSchema({
     steps: v.optional(v.array(v.string())),     // actionable step-by-step instructions
     proof_requirement: v.optional(v.string()),  // what counts as proof of completion
     note: v.optional(v.string()),               // completion record: what actually happened / proof submitted
+    image_url: v.optional(v.string()),          // photo proof / illustration
     quest_type: v.optional(v.string()),         // "main" | "side" | "daily"
     unlocks: v.optional(v.array(v.string())),   // quest names this unlocks upon completion
     is_boss: v.optional(v.boolean()),

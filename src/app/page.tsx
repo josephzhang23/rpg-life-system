@@ -140,6 +140,10 @@ function QuestRow({ quest, completed, onComplete, indent }: {
         {quest.name}
       </Link>
 
+      {quest.image_url && (
+        <img src={quest.image_url} alt="" style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0, border: '1px solid rgba(200,160,50,0.2)' }} />
+      )}
+
       <span
         className="text-[11px] font-bold px-2 py-[2px] rounded-sm flex-shrink-0"
         style={{

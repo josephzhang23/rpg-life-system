@@ -139,6 +139,14 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
           </div>
         )}
 
+        {/* ── Quest Image ── */}
+        {quest.image_url && (
+          <div className="mb-4">
+            <img src={quest.image_url} alt={quest.name}
+              style={{ width: '100%', borderRadius: '6px', border: '1px solid rgba(200,160,50,0.2)', objectFit: 'cover', maxHeight: '280px' }} />
+          </div>
+        )}
+
         {/* ── Submitted Proof (note) ── */}
         {quest.note && (() => {
           const proofMatch = quest.note.match(/\[proof:([^\]]+)\]/);
