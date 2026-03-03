@@ -117,10 +117,11 @@ export default function JournalPage() {
                           INT:  { bg: 'rgba(96,160,255,0.12)',  border: 'rgba(96,160,255,0.4)',  color: '#60a0ff', label: '智力' },
                           DISC: { bg: 'rgba(255,128,64,0.12)',  border: 'rgba(255,128,64,0.4)',  color: '#ff8040', label: '意志' },
                           STR:  { bg: 'rgba(255,64,96,0.12)',   border: 'rgba(255,64,96,0.4)',   color: '#ff4060', label: '力量' },
+                          STA:  { bg: 'rgba(255,210,64,0.12)',  border: 'rgba(255,210,64,0.4)',  color: '#ffd240', label: '耐力' },
                           SOC:  { bg: 'rgba(64,216,144,0.12)',  border: 'rgba(64,216,144,0.4)',  color: '#40d890', label: '魅力' },
                           CRE:  { bg: 'rgba(192,96,255,0.12)', border: 'rgba(192,96,255,0.4)',  color: '#c060ff', label: '创造' },
                         };
-                        const match = text.match(/^([+-]\d+)\s+(INT|DISC|STR|SOC|CRE)(\s+XP)?$/);
+                        const match = text.match(/^([+-]\d+)\s+(INT|DISC|STR|STA|SOC|CRE)(\s+XP)?$/);
                         if (match) {
                           const stat = match[2];
                           const c = statConfig[stat];
