@@ -140,7 +140,7 @@ export const getDashboard = query({
     // Only return completed quests — DB is a ledger of victories, not a to-do list
     const questsToday = quests.filter((q: any) => q.date === today && !q.is_boss && q.completed);
     // Manually added goal quests (not daily templates, not boss, not yet completed)
-    const TEMPLATE_NAMES = ["Plan your top 3 priorities","60 minutes deep work sprint","Workout / movement session","Meaningful outreach or connection","Create something publishable","Push a commit"];
+    const TEMPLATE_NAMES = ["Plan your top priorities","60 minutes deep work sprint","Workout / movement session","Meaningful outreach or connection","Create something publishable","Push a commit"];
     const pendingGoals = quests.filter((q: any) => !q.is_boss && !q.completed && !TEMPLATE_NAMES.includes(q.name));
     const activeBoss = quests.find((q: any) => q.is_boss && !q.completed) ?? null;
     const totalXp = stats.reduce((sum: number, s: any) => sum + (s.total_xp ?? 0), 0);
@@ -200,7 +200,7 @@ export const initCharacter = mutation({
     }
 
     const questSeeds = [
-      { name: "Plan your top 3 priorities", stat: "DISC", xp_reward: 20, completed: false, date: today },
+      { name: "Plan your top priorities", stat: "DISC", xp_reward: 20, completed: false, date: today },
       { name: "60 minutes deep work sprint", stat: "INT", xp_reward: 35, completed: false, date: today },
       { name: "Workout / movement session", stat: "STR", xp_reward: 30, completed: false, date: today },
       { name: "Meaningful outreach", stat: "SOC", xp_reward: 25, completed: false, date: today },
@@ -309,7 +309,7 @@ export const addAchievement = mutation({
 // Default quest templates — regenerated each day
 const DAILY_QUEST_TEMPLATES = [
   {
-    name: "Plan your top 3 priorities", stat: "DISC", xp_reward: 20,
+    name: "Plan your top priorities", stat: "DISC", xp_reward: 20,
     objective: "写下今天最重要的事（1-3 件），专注执行。",
     description: "真正的高手从不靠灵感，只靠系统。清单越短，执行力越强。今天只有一件事？那才是真正想清楚了。",
     steps: [

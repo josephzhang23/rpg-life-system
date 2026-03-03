@@ -17,7 +17,7 @@ const STAT_META: Record<string, { zh: string; color: string; bg: string }> = {
 };
 
 const DAILY_QUEST_TEMPLATES: any[] = [
-  { name: "Plan your top 3 priorities", stat: "DISC", xp_reward: 20,
+  { name: "Plan your top priorities", stat: "DISC", xp_reward: 20,
     objective: "写下今天最重要的事（1-3 件），专注执行。",
     description: "真正的高手从不靠灵感，只靠系统。清单越短，执行力越强。今天只有一件事？那才是真正想清楚了。",
     steps: ["打开备忘录、纸或任意工具","写下今天必须完成的事（1-3 件，质量优先）","按影响力从高到低排序","把第一项安排进今天的时间块"],
