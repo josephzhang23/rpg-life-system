@@ -257,18 +257,21 @@ function QuestLogInner() {
     const qName = params.get('q');
     if (!qName) return;
     const decoded = decodeURIComponent(qName);
-    // Try DB first
-    const found = quests.find((q: any) => q.name === decoded);
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+    // Prefer today's record; fall back to any DB record; then virtual template
+    const todayRecord = quests.find((q: any) => q.name === decoded && q.date === today);
+    const anyRecord = quests.find((q: any) => q.name === decoded);
+    const found = todayRecord ?? anyRecord ?? null;
     if (found) {
       setSelected(enrichQuest(found));
       setShowDetail(true);
       setAutoSelected(true);
       return;
     }
-    // Fall back to daily template (not yet in DB)
+    // Fall back to daily template (not yet in DB — show as pending)
     const tmpl = DAILY_QUEST_TEMPLATES.find(t => t.name === decoded);
     if (tmpl) {
-      setSelected({ ...tmpl, completed: false, date: new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' }) });
+      setSelected({ ...tmpl, completed: false, date: today });
       setShowDetail(true);
       setAutoSelected(true);
     }
