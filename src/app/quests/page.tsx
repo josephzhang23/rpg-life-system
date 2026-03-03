@@ -143,7 +143,7 @@ function QuestDetail({ quest, onBack }: { quest: any; onBack: () => void }) {
         {quest.image_url && (
           <div className="mb-4">
             <img src={quest.image_url} alt={quest.name}
-              style={{ width: '100%', borderRadius: '6px', border: '1px solid rgba(200,160,50,0.2)', objectFit: 'cover', maxHeight: '280px' }} />
+              style={{ width: '100%', height: 'auto', borderRadius: '6px', border: '1px solid rgba(200,160,50,0.2)', display: 'block' }} />
           </div>
         )}
 
