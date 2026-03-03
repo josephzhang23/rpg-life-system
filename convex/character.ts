@@ -419,7 +419,8 @@ export const logCompletedQuest = mutation({
     if (existing) {
       if (existing.completed) return { ok: true, duplicate: true };
       // Was pre-inserted uncompleted — patch it, update date to today
-      await ctx.db.patch(existing._id, { completed: true, note: args.note, date: today });
+      // Always explicitly set note (even to "") to clear any stale note from old record
+      await ctx.db.patch(existing._id, { completed: true, note: args.note ?? "", date: today });
     } else {
       await ctx.db.insert("quests", {
         name: args.name,
@@ -584,8 +585,10 @@ export const addQuestToday = mutation({
   },
   handler: async (ctx, args) => {
     const date = args.date ?? todayISO();
+    // Only block if there's already a pending (uncompleted) quest with this name,
+    // or a completed quest with this name for TODAY — allow re-adding for a new day
     const existing = (await ctx.db.query("quests").collect()).find(
-      (q: any) => q.name === args.name && !q.is_boss
+      (q: any) => q.name === args.name && !q.is_boss && (!q.completed || q.date === date)
     );
     if (existing) return { ok: true, reason: "already_exists" };
     await ctx.db.insert("quests", {
