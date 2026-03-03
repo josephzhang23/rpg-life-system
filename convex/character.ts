@@ -310,15 +310,15 @@ export const addAchievement = mutation({
 const DAILY_QUEST_TEMPLATES = [
   {
     name: "Plan your top 3 priorities", stat: "DISC", xp_reward: 20,
-    objective: "写下今天最重要的三件事，专注执行。",
-    description: "真正的高手从不靠灵感，只靠系统。清单越短，执行力越强。今天写下的三件事，是你对自己最基本的承诺——也是你最小的、不可推卸的战场。",
+    objective: "写下今天最重要的事（1-3 件），专注执行。",
+    description: "真正的高手从不靠灵感，只靠系统。清单越短，执行力越强。今天只有一件事？那才是真正想清楚了。",
     steps: [
       "打开备忘录、纸或任意工具",
-      "写下今天必须完成的三件事（只允许三件）",
+      "写下今天必须完成的事（1-3 件，质量优先）",
       "按影响力从高到低排序",
       "把第一项安排进今天的时间块",
     ],
-    proof_requirement: "写出今天最重要的三件事",
+    proof_requirement: "写出今天最重要的 1-3 件事",
   },
   {
     name: "60 minutes deep work sprint", stat: "INT", xp_reward: 35,
