@@ -113,28 +113,28 @@ export default function JournalPage() {
                       em: ({ children }) => <em style={{ color: 'rgba(232,213,163,0.7)' }}>{children}</em>,
                       code: ({ children }) => {
                         const text = String(children).trim();
-                        const statColors: Record<string, { bg: string; border: string; color: string }> = {
-                          INT:  { bg: 'rgba(96,160,255,0.12)',  border: 'rgba(96,160,255,0.4)',  color: '#60a0ff' },
-                          DISC: { bg: 'rgba(255,128,64,0.12)',  border: 'rgba(255,128,64,0.4)',  color: '#ff8040' },
-                          STR:  { bg: 'rgba(255,64,96,0.12)',   border: 'rgba(255,64,96,0.4)',   color: '#ff4060' },
-                          SOC:  { bg: 'rgba(64,216,144,0.12)',  border: 'rgba(64,216,144,0.4)',  color: '#40d890' },
-                          CRE:  { bg: 'rgba(192,96,255,0.12)', border: 'rgba(192,96,255,0.4)',  color: '#c060ff' },
+                        const statConfig: Record<string, { bg: string; border: string; color: string; label: string }> = {
+                          INT:  { bg: 'rgba(96,160,255,0.12)',  border: 'rgba(96,160,255,0.4)',  color: '#60a0ff', label: '智力' },
+                          DISC: { bg: 'rgba(255,128,64,0.12)',  border: 'rgba(255,128,64,0.4)',  color: '#ff8040', label: '意志' },
+                          STR:  { bg: 'rgba(255,64,96,0.12)',   border: 'rgba(255,64,96,0.4)',   color: '#ff4060', label: '力量' },
+                          SOC:  { bg: 'rgba(64,216,144,0.12)',  border: 'rgba(64,216,144,0.4)',  color: '#40d890', label: '魅力' },
+                          CRE:  { bg: 'rgba(192,96,255,0.12)', border: 'rgba(192,96,255,0.4)',  color: '#c060ff', label: '创造' },
                         };
                         const match = text.match(/^([+-]\d+)\s+(INT|DISC|STR|SOC|CRE)(\s+XP)?$/);
                         if (match) {
                           const stat = match[2];
-                          const c = statColors[stat];
+                          const c = statConfig[stat];
                           return (
                             <span style={{
                               display: 'inline-flex', alignItems: 'center', gap: '4px',
                               background: c.bg, border: `1px solid ${c.border}`,
                               borderRadius: '3px', padding: '1px 7px',
-                              fontFamily: "'Cinzel', serif", fontSize: '11px',
+                              fontFamily: "'Noto Serif SC', serif", fontSize: '11px',
                               color: c.color, letterSpacing: '0.5px',
                               verticalAlign: 'middle', margin: '0 2px',
                               boxShadow: `0 0 6px ${c.border}`,
                             }}>
-                              {match[1]} {stat}
+                              {match[1]} {c.label}
                             </span>
                           );
                         }
