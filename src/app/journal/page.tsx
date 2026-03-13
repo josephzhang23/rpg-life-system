@@ -50,7 +50,13 @@ export default function JournalPage() {
           overflowY: 'auto',
           background: 'rgba(8,4,1,0.6)',
         }}>
-          {(journals ?? []).length === 0 && (
+          {journals === undefined && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '11px', color: 'rgba(200,160,80,0.4)', gap: '6px' }}>
+              <div style={{ fontSize: '18px' }}>⏳</div>
+              加载中...
+            </div>
+          )}
+          {journals !== undefined && journals.length === 0 && (
             <div style={{ padding: '16px 12px', fontSize: '11px', color: 'rgba(200,160,80,0.3)', lineHeight: 1.6 }}>
               还没有记录。
             </div>

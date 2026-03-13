@@ -403,6 +403,7 @@ export const logCompletedQuest = mutation({
     note: v.optional(v.string()),
     is_penalty: v.optional(v.boolean()),
     date: v.optional(v.string()),
+    quest_type: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const today = args.date ?? todayISO();
@@ -420,7 +421,7 @@ export const logCompletedQuest = mutation({
       if (existing.completed) return { ok: true, duplicate: true };
       // Was pre-inserted uncompleted — patch it, update date to today
       // Always explicitly set note (even to "") to clear any stale note from old record
-      await ctx.db.patch(existing._id, { completed: true, note: args.note ?? "", date: today });
+      await ctx.db.patch(existing._id, { completed: true, note: args.note ?? "", date: today, ...(args.quest_type ? { quest_type: args.quest_type } : {}) });
     } else {
       await ctx.db.insert("quests", {
         name: args.name,
@@ -435,6 +436,7 @@ export const logCompletedQuest = mutation({
         date: today,
         is_boss: false,
         is_penalty: args.is_penalty ?? false,
+        ...(args.quest_type ? { quest_type: args.quest_type } : {}),
       } as any);
     }
 
@@ -808,16 +810,6 @@ export const setQuestType = mutation({
     const quest = await ctx.db.get(args.questId as any);
     if (!quest) throw new Error("Quest not found");
     await ctx.db.patch(quest._id, { quest_type: args.quest_type });
-    return { ok: true };
-  },
-});
-
-export const setQuestImage = mutation({
-  args: { questId: v.string(), image_url: v.string() },
-  handler: async (ctx, args) => {
-    const quest = await ctx.db.get(args.questId as any);
-    if (!quest) throw new Error("Quest not found");
-    await ctx.db.patch(quest._id, { image_url: args.image_url });
     return { ok: true };
   },
 });
